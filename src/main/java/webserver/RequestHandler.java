@@ -2,10 +2,11 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
-import com.google.common.base.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.RequestHandlerHelper;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -22,14 +23,8 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // 사용자 요청 처리 부분
-            BufferedReader br = new BufferedReader(new InputStreamReader(in, Charsets.UTF_8));
-            StringBuilder requestLog = new StringBuilder();
-            String line;
-            do {
-                line = br.readLine();
-                requestLog.append(line).append("\n");
-            } while (!(line == null || line.isEmpty()));
-            logger.debug(requestLog.toString());
+            String header = RequestHandlerHelper.getHeader(in);
+            logger.debug(header);
 
             // 사용자 요청 처리 부분 끝
             DataOutputStream dos = new DataOutputStream(out);
