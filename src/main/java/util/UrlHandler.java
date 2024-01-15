@@ -8,7 +8,13 @@ public class UrlHandler {
             "html", ContentType.HTML,
             "css", ContentType.CSS,
             "js", ContentType.JS,
-            "ico", ContentType.ICO
+            "ico", ContentType.ICO,
+            "png", ContentType.PNG,
+            "svg", ContentType.SVG,
+            "eot", ContentType.EOT,
+            "ttf", ContentType.TTF,
+            "woff", ContentType.WOFF,
+            "woff2", ContentType.WOFF2
     );
 
     public static ContentType getContentType(String url) {
