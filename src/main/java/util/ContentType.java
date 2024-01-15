@@ -9,13 +9,11 @@ public enum ContentType {
     SVG("image/svg+xml"),
     PLAIN("text/plain"),
 
-    // font
+    // font: https://www.iana.org/assignments/media-types/media-types.xhtml#font
     EOT("application/vnd.ms-fontobject"),
-    TTF("application/x-font-ttf"),
-    WOFF("application/font-woff"),
-    WOFF2("application/font-woff2")
-    ;
-
+    TTF("font/ttf"),
+    WOFF("font/woff"),
+    WOFF2("font/woff2");
 
     private final String type;
 
