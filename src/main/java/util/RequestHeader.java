@@ -14,7 +14,6 @@ public class RequestHeader {
     private final String method;
     private final String url;
 
-
     public RequestHeader(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
         StringBuilder sb = new StringBuilder();
