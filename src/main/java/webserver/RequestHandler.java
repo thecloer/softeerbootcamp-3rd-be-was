@@ -28,7 +28,11 @@ public class RequestHandler implements Runnable {
             RequestHeader header = new RequestHeader(in);
             logger.debug(header.getHeader());
 
+            String method = header.getMethod();
             String url = header.getURL();
+            if("GET".equals(method) && "/".equals(url))
+                url = "/index.html";
+
             ContentType type = UrlHandler.getContentType(url);
 
             byte[] body = ResourceHandler.getResource(type, url);
