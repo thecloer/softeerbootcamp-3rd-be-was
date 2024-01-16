@@ -15,6 +15,7 @@
 
 ## 구현 내용
 - ✅ Http request 로깅
+  - "[ {protocol} {method} ] {path?query#fragment}"
 - ✅ 정적 파일 응답
     - 요청 리소스의 확장자에 따라 응답 헤더의 `Content-Type`설정, 리소스 경로 분기 응답
     - `.html` -> `resources/templates`
@@ -29,6 +30,7 @@
     - 추후 필요시 유틸 클래스 혹은 URI 클래스를 상속받는 클래스를 만들어 빼낼 예정
 - 요청 예외처리(오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?)
     - step-2에서 라우터를 구현 한뒤 예외에 따라 오류 메세지 혹은 오류 페이지 응답 해보자
+
 ## 기타
 - MIME(Multipurpose Internet Mail Extensions) type
     - [MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
