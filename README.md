@@ -56,3 +56,34 @@
     - [최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
 - 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리 
   - 블로그 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+
+## 2단계 - GET으로 회원가입
+
+### 학습 키워드 & 학습 목표
+> HTTP GET
+- HTTP GET 프로토콜을 이해한다. 
+- HTTP GET에서 parameter를 전달하고 처리하는 방법을 학습한다. 
+- HTTP 클라이언트에서 전달받은 값을 서버에서 처리하는 방법을 학습한다.
+
+### 기능 요구사항
+- [ ] HTTP GET으로 회원가입
+  - "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시한다. 
+  - 이 폼을 통해서 회원가입을 할 수 있다.
+
+### 프로그래밍 요구사항
+- 회원가입 폼에서 가입 버튼을 클릭하면 다음과 같은 형태로 사용자가 입력한 값이 서버에 전달된다.
+  ```
+  /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
+  ```
+- HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
+- 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
+- `Junit`을 활용한 단위 테스트를 적용해 본다.
+
+### 구현 내용
+- [ ] "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
+- [ ] 폼을 통한 회원가입
+- [ ] `Junit`을 활용한 단위 테스트 적용
+
+### 고민 사항
+
+### 기타
