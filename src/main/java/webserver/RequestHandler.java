@@ -23,13 +23,14 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             HttpRequest request = RequestParser.parse(in);
+            HttpResponse response = new HttpResponse(out);
+
             logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getPath());
 
             URI uri = request.getUri();
             ContentType type = ContentType.getContentType(uri.getPath());
             byte[] body = ResourceHandler.getResource(type, uri.getPath());
 
-            HttpResponse response = new HttpResponse(connection);
             response.status(HttpStatus.OK)
                     .contentType(type)
                     .body(body)

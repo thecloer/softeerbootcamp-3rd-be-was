@@ -13,13 +13,13 @@ public class HttpResponse {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private final Socket connection;
+    private final OutputStream out;
     private HttpStatus status = HttpStatus.OK;
     private ContentType contentType = ContentType.OCTET_STREAM;
     private byte[] body;
 
-    public HttpResponse(Socket connection) {
-        this.connection = connection;
+    public HttpResponse(OutputStream out) {
+        this.out = out;
     }
 
     public HttpResponse status(HttpStatus status) {
@@ -38,12 +38,11 @@ public class HttpResponse {
     }
 
     public void send() {
-        sendResponse(connection, status, contentType, body);
+        sendResponse(out, status, contentType, body);
     }
 
-    private static void sendResponse(Socket connection, HttpStatus status, ContentType contentType, byte[] body) {
+    private static void sendResponse(OutputStream out, HttpStatus status, ContentType contentType, byte[] body) {
         try {
-            OutputStream out = connection.getOutputStream();
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMessage() + " \r\n");
             dos.writeBytes("Content-Type: " + contentType.getValue() + ";charset=utf-8\r\n");
