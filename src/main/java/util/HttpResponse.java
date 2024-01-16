@@ -1,0 +1,61 @@
+package util;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import webserver.RequestHandler;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.Socket;
+
+public class HttpResponse {
+
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+
+    private final Socket connection;
+    private HttpStatus status = HttpStatus.OK;
+    private ContentType contentType = ContentType.OCTET_STREAM;
+    private byte[] body;
+
+    public HttpResponse(Socket connection) {
+        this.connection = connection;
+    }
+
+    public HttpResponse status(HttpStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public HttpResponse contentType(ContentType contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public HttpResponse body(byte[] body) {
+        this.body = body;
+        return this;
+    }
+
+    public void send() {
+        sendResponse(connection, status, contentType, body);
+    }
+
+    private static void sendResponse(Socket connection, HttpStatus status, ContentType contentType, byte[] body) {
+        try {
+            OutputStream out = connection.getOutputStream();
+            DataOutputStream dos = new DataOutputStream(out);
+            dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMessage() + " \r\n");
+            dos.writeBytes("Content-Type: " + contentType.getValue() + ";charset=utf-8\r\n");
+            dos.writeBytes("Content-Length: " + body.length + "\r\n");
+            dos.writeBytes("\r\n");
+
+            if(body.length > 0)
+                dos.write(body, 0, body.length);
+
+            dos.flush();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+}
