@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 public class HttpRequest {
     private final String method;
@@ -33,8 +34,9 @@ public class HttpRequest {
         Map<String, String> queries = new HashMap<>();
         String[] params = query.split("&");
         for (String param : params) {
-            String[] keyValue = param.split("=");
-            queries.put(keyValue[0], keyValue[1]);
+            StringTokenizer st = new StringTokenizer(param, "=");
+            if(st.countTokens() == 2)
+                queries.put(st.nextToken(), st.nextToken());
         }
         this.queries = Collections.unmodifiableMap(queries);
     }
