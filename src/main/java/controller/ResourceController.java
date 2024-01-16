@@ -11,7 +11,7 @@ public class ResourceController {
     private static final String TEMPLATE = "src/main/resources/templates";
     private static final String STATIC = "src/main/resources/static";
 
-    public static void resourceHandler(HttpRequest request, HttpResponse response) {
+    public void resourceHandler(HttpRequest request, HttpResponse response) {
         String url = request.getUri().getPath();
         ContentType contentType = ContentType.getContentType(url);
         String base = contentType == ContentType.HTML ? TEMPLATE : STATIC;
@@ -29,7 +29,7 @@ public class ResourceController {
         }
     }
 
-    private static byte[] read(String base, String url) throws IOException {
+    private byte[] read(String base, String url) throws IOException {
         return Files.readAllBytes(new File(base + url).toPath());
     }
 }
