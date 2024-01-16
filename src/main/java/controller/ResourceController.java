@@ -23,7 +23,8 @@ public class ResourceController {
                     .body(body)
                     .send();
         } catch (IOException e) {
-            response.status(HttpStatus.NOT_FOUND)
+            response.status(HttpStatus.FOUND)
+                    .addHeader("Location", "/404.html")
                     .send();
         }
     }
