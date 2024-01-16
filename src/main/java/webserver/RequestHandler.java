@@ -29,29 +29,11 @@ public class RequestHandler implements Runnable {
             ContentType type = ContentType.getContentType(uri.getPath());
             byte[] body = ResourceHandler.getResource(type, uri.getPath());
 
-            DataOutputStream dos = new DataOutputStream(out);
-            response200Header(dos, type, body.length);
-            responseBody(dos, body);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void response200Header(DataOutputStream dos, ContentType type, int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + type.getValue() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    private void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
+            HttpResponse response = new HttpResponse(connection);
+            response.status(HttpStatus.OK)
+                    .contentType(type)
+                    .body(body)
+                    .send();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
