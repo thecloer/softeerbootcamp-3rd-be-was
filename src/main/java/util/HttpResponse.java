@@ -15,7 +15,7 @@ public class HttpResponse {
     private final OutputStream out;
     private HttpStatus status = HttpStatus.OK;
     private ContentType contentType = ContentType.OCTET_STREAM;
-    private byte[] body;
+    private byte[] body = new byte[0];
 
     public HttpResponse(OutputStream out) {
         this.out = out;
