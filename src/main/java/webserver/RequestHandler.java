@@ -22,7 +22,7 @@ public class RequestHandler implements Runnable {
             HttpRequest request = RequestParser.parse(in);
             HttpResponse response = new HttpResponse(out);
 
-            logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getPath());
+            logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getUri());
 
             BiConsumer<HttpRequest, HttpResponse> handler = Router.route(request);
 

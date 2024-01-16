@@ -20,7 +20,7 @@ public class RequestParser {
         StringTokenizer st = new StringTokenizer(line);
         HttpRequest.Builder requestBuilder = new HttpRequest.Builder()
                 .method(st.nextToken())
-                .path(st.nextToken())
+                .uri(st.nextToken())
                 .protocol(st.nextToken());
 
         line = br.readLine();
