@@ -2,7 +2,7 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URI;
+import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import util.*;
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -24,14 +24,10 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getPath());
 
-            URI uri = request.getUri();
-            ContentType type = ContentType.getContentType(uri.getPath());
-            byte[] body = ResourceHandler.getResource(type, uri.getPath());
+            BiConsumer<HttpRequest, HttpResponse> handler = Router.route(request);
 
-            response.status(HttpStatus.OK)
-                    .contentType(type)
-                    .body(body)
-                    .send();
+            handler.accept(request, response);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
