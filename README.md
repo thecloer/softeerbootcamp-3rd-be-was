@@ -35,5 +35,5 @@
 - MIME(Multipurpose Internet Mail Extensions) type
     - [MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
     - [최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
-- 자바 `Thread`와 `Concurrent` 패키지 블로그 정리: [링크](https://cloer.tistory.com/266)
-    - JDK 21에 추가된 Virtual Thread에 대한 내용 추가해보자
+- 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리 
+  - 블로그 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
