@@ -5,6 +5,7 @@ import service.UserService;
 import util.HttpRequest;
 import util.HttpResponse;
 import util.HttpStatus;
+import util.UriHelper;
 
 import java.util.Map;
 
@@ -28,12 +29,12 @@ public class UserController {
             );
 
             response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/profile.html?userId=" + user.getUserId())
+                    .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
                     .send();
 
         } catch (IllegalArgumentException e) {
             response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/form.html?message=" + e.getMessage())
+                    .addHeader("Location", "/user/form.html?message=" + UriHelper.encode(e.getMessage()))
                     .send();
         }
     }
