@@ -2,8 +2,9 @@
 
 ## 프로젝트 정보 
 
-소프티어 부트캠프 3기 BE 과제로 진행한 프로젝트입니다.
-과제 레포지토리: https://github.com/softeerbootcamp-3rd/be-was
+소프티어 부트캠프 3기 BE 과제로 진행한 프로젝트입니다.  
+과제 레포지토리: https://github.com/softeerbootcamp-3rd/be-was  
+개인 레포지토리: https://github.com/thecloer/softeerbootcamp-3rd-be-was  
 
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was 
 를 참고하여 작성되었습니다.
@@ -17,8 +18,8 @@
 - 유지보수에 좋은 구조에 대해 고민하고 코드를 개선해 본다.
 
 ### 기능 요구사항
-- ✅http://localhost:8080/index.html 로 접속했을 때 `src/main/resources/templates` 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
-- ✅서버로 들어오는 HTTP Request의 내용을 읽고 적절하게 파싱해서 로거(log.debug)를 이용해 출력한다.
+- http://localhost:8080/index.html 로 접속했을 때 `src/main/resources/templates` 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
+- 서버로 들어오는 HTTP Request의 내용을 읽고 적절하게 파싱해서 로거(log.debug)를 이용해 출력한다.
 
 ### 프로그래밍 요구사항 
 - 프로젝트 분석
@@ -66,7 +67,7 @@
 - HTTP 클라이언트에서 전달받은 값을 서버에서 처리하는 방법을 학습한다.
 
 ### 기능 요구사항
-- [ ] HTTP GET으로 회원가입
+- HTTP GET으로 회원가입
   - "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시한다. 
   - 이 폼을 통해서 회원가입을 할 수 있다.
 
@@ -80,10 +81,36 @@
 - `Junit`을 활용한 단위 테스트를 적용해 본다.
 
 ### 구현 내용
-- [ ] "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
-- [ ] 폼을 통한 회원가입
-- [ ] `Junit`을 활용한 단위 테스트 적용
+- ✅ "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
+- ✅ 폼을 통한 회원가입
+  - 회원가입 성공시 `/user/profile.html?userId={userId}`로 리다이렉트
+  - 회원가입 실패시 `/user/form.html?message={errorMessage}`로 리다이렉트
+    - step 3 완료 이후 프론트에서 메세지 표시 구현할 예정
+- ✅ 잘못된 경로 접근 시 404 페이지 리다이렉트
+- ✅ `Junit`을 활용한 단위 테스트 적용
+  - `UserControllerTest`: 회원가입 요청을 받고 응답하는 테스트
+  - `UserServiceTest`: DB에 회원 저장, 입력 형식 예외 테스트
+  - 테스트의 편의를 위해 DI 도입
+    - DB static 변수에서 `ConcurrentHashMap`으로 변경
+    - `BeanContainer`에서 컨트롤러와 서비스 객체를 관리하도록 변경
 
 ### 고민 사항
+- `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
+  - `/`를 `/index.html`로 매핑하는 것은 루트 경로가 비어있을 경우 표시할 기본 경로 설정이라 생각
+  - 기본 경로 설정은 라우터에서 필터링되지 않은 경로를 처리하는 `ResourceController`에 구현
+- `BeanContainer`와 `UserService`가 꼭 필요할까?
+  - `BeanContainer`
+    - static 변수로 생성된 DB의 경우 테스트마다 DB 초기화 필요
+    - 테스트를 위해 서비스에 불필요한 DB 초기화 메서드를 구현해야함
+    - DB를 인스턴스 + `CuncurrentHashMap`으로 변경하여 테스트마다 DB 인스턴스를 생성해 주입
+    - DB 인스턴스를 전역에서 관리하기 위해 `BeanContainer` 생성
+    - 컨트롤러, 서비스 또한 `BeanContainer`에서 관리하여 후에 객체 생성 방법이 변경되어도 `BeanContainer`에서만 수정하면 되도록 객체의 생성과 소비를 분리
+  - `UserService`
+    - 테스트 코드 작성의 편의를 위해 도입
+    - 컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리
 
 ### 기타
+1. HTTP GET 프로토콜을 이해한다.  
+GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데이터에 영향을 주지 않는다.  
+데이터 요청에 필요한 추가 정보는 URI의 쿼리 스트링으로 전달할 수 있다. (예: `https://example.com/products?category=books&page=1`)
+자주 바뀌지 않는 데이터에 대한 GET 요청은 결과를 캐싱해 같은 요청이 재발생할 경우 빠르게 응답을 제공할 수 있다.
