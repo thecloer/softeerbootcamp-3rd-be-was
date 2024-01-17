@@ -38,7 +38,7 @@ public class HttpRequest {
         return protocol;
     }
     public String getProperty(String key) {
-        return properties.getOrDefault(key, null);
+        return properties.getOrDefault(key, "");
     }
     public String getPath() {
         return path;
