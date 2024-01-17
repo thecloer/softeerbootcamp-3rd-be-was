@@ -41,13 +41,4 @@ public class RequestParser {
             builder.setProperty(st.nextToken(), st.nextToken());
         }
     }
-
-    public static String extractExtension(String path) {
-        int index = path.lastIndexOf(".");
-
-        if (index == -1)
-            return "";
-
-        return path.substring(index + 1);
-    }
 }

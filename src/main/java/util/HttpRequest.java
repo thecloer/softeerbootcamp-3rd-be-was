@@ -3,7 +3,6 @@ package util;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 public class HttpRequest {
     private final String method;
@@ -20,22 +19,13 @@ public class HttpRequest {
         this.protocol = protocol;
         this.properties = properties;
 
-        String[] splitString = uri.split("\\?");
-        this.path = splitString[0];
-
-        if(splitString.length == 1) {
-            this.queries = Collections.unmodifiableMap(new HashMap<>());
-            return;
-        }
-
-        Map<String, String> queries = new HashMap<>();
-        String[] params = splitString[1].split("&");
-        for (String param : params) {
-            StringTokenizer st = new StringTokenizer(param, "=");
-            if(st.countTokens() == 2)
-                queries.put(st.nextToken(), st.nextToken());
-        }
-        this.queries = Collections.unmodifiableMap(queries);
+        String[] splittedString = uri.split("\\?");
+        this.path = splittedString[0];
+        this.queries = Collections.unmodifiableMap(
+                (splittedString.length > 1)
+                        ? UriHelper.parseQueryString(splittedString[1])
+                        : new HashMap<>()
+        );
     }
 
     public String getMethod() {

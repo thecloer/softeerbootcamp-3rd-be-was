@@ -41,7 +41,7 @@ public enum ContentType {
     }
 
     public static ContentType getContentType(String path) {
-        return CONTENT_TYPE_MAP.getOrDefault(RequestParser.extractExtension(path), ContentType.OCTET_STREAM);
+        return CONTENT_TYPE_MAP.getOrDefault(UriHelper.extractExtension(path), ContentType.OCTET_STREAM);
     }
 
     public String getValue() {
