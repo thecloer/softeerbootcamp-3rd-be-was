@@ -2,12 +2,9 @@ package service;
 
 import db.Database;
 import model.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final Database database;
 
     public UserService(Database database) {
@@ -31,7 +28,6 @@ public class UserService {
         User user = new User(userId, password, name, email);
         database.addUser(user);
 
-        logger.debug("[회원 생성] id: {}", user.getUserId());
         return user;
     }
 }
