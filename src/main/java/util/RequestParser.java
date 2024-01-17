@@ -20,7 +20,7 @@ public class RequestParser {
         StringTokenizer st = new StringTokenizer(line);
         HttpRequest.Builder requestBuilder = new HttpRequest.Builder()
                 .method(st.nextToken())
-                .path(st.nextToken())
+                .uri(st.nextToken())
                 .protocol(st.nextToken());
 
         line = br.readLine();
@@ -31,5 +31,14 @@ public class RequestParser {
         }
 
         return requestBuilder.build();
+    }
+
+    public static String extractExtension(String path) {
+        int index = path.lastIndexOf(".");
+
+        if (index == -1)
+            return "";
+
+        return path.substring(index + 1);
     }
 }

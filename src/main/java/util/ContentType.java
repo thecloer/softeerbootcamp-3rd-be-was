@@ -34,23 +34,14 @@ public enum ContentType {
         CONTENT_TYPE_MAP.put("woff2", WOFF2);
     }
 
-    public static ContentType getContentType(String path) {
-        return CONTENT_TYPE_MAP.getOrDefault(getExtension(path), ContentType.OCTET_STREAM);
-    }
-
-    private static String getExtension(String path) {
-        int index = path.lastIndexOf(".");
-
-        if (index == -1)
-            return "";
-
-        return path.substring(index + 1);
-    }
-
     private final String value;
 
     ContentType(String value) {
         this.value = value;
+    }
+
+    public static ContentType getContentType(String path) {
+        return CONTENT_TYPE_MAP.getOrDefault(RequestParser.extractExtension(path), ContentType.OCTET_STREAM);
     }
 
     public String getValue() {
