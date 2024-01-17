@@ -12,14 +12,14 @@ public class ResourceController {
     private static final String STATIC = "src/main/resources/static";
 
     public void resourceHandler(HttpRequest request, HttpResponse response) {
-        String url = request.getUri().getPath();
-        ContentType contentType = ContentType.getContentType(url);
+        String path = request.getPath();
+        ContentType contentType = ContentType.getContentType(path);
         String base = contentType == ContentType.HTML ? TEMPLATE : STATIC;
 
         try {
-            byte[] body = read(base, url);
+            byte[] body = read(base, path);
             response.status(HttpStatus.OK)
-                    .contentType(ContentType.getContentType(url))
+                    .contentType(ContentType.getContentType(path))
                     .body(body)
                     .send();
         } catch (IOException e) {
@@ -29,7 +29,7 @@ public class ResourceController {
         }
     }
 
-    private byte[] read(String base, String url) throws IOException {
-        return Files.readAllBytes(new File(base + url).toPath());
+    private byte[] read(String base, String path) throws IOException {
+        return Files.readAllBytes(new File(base + path).toPath());
     }
 }
