@@ -34,7 +34,6 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             response.status(HttpStatus.FOUND)
                     .addHeader("Location", "/user/form.html?message=" + e.getMessage())
-                    .body(e.getMessage().getBytes())
                     .send();
         }
     }
