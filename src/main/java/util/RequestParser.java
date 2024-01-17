@@ -1,6 +1,5 @@
 package util;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,25 +11,35 @@ public class RequestParser {
 
     public static HttpRequest parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+
         String line = br.readLine();
+        HttpRequest.Builder requestBuilder = new HttpRequest.Builder();
 
-        if(line == null)
-            throw new IOException("Empty Request");
-
-        StringTokenizer st = new StringTokenizer(line);
-        HttpRequest.Builder requestBuilder = new HttpRequest.Builder()
-                .method(st.nextToken())
-                .uri(st.nextToken())
-                .protocol(st.nextToken());
-
-        line = br.readLine();
-        while(!(line == null || line.isEmpty())) {
-            st = new StringTokenizer(line, ": ");
-            requestBuilder.setProperty(st.nextToken(), st.nextToken());
-            line = br.readLine();
-        }
+        parseRequestLine(requestBuilder, line);
+        parseRequestHeader(requestBuilder, br);
 
         return requestBuilder.build();
+    }
+
+    private static void parseRequestLine(HttpRequest.Builder builder, String requestLine) {
+        StringTokenizer st = new StringTokenizer(requestLine);
+
+        if(st.countTokens() != 3)
+            throw new IllegalArgumentException("Invalid Request Line");
+
+        builder.method(st.nextToken())
+                .uri(st.nextToken())
+                .protocol(st.nextToken());
+    }
+    private static void parseRequestHeader(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
+        for(String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
+
+            StringTokenizer st = new StringTokenizer(line, ": ");
+            if(st.countTokens() != 2)
+                continue;
+
+            builder.setProperty(st.nextToken(), st.nextToken());
+        }
     }
 
     public static String extractExtension(String path) {
