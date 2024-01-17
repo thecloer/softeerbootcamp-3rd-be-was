@@ -19,7 +19,7 @@ public class ResourceController {
         try {
             byte[] body = read(base, path);
             response.status(HttpStatus.OK)
-                    .contentType(ContentType.getContentType(path))
+                    .contentType(contentType)
                     .body(body)
                     .send();
         } catch (IOException e) {
