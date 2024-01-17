@@ -62,11 +62,13 @@ public class HttpResponse {
 
     @Override
     public String toString() {
-        return "HttpResponse{" +
-                " status=" + status.getCode() +
-                ", contentType=" + contentType.getValue() +
-                ", additionalHeader=" + additionalHeader +
-                ", body=" + new String(body) +
-                '}';
+        return new StringBuilder()
+                .append("HttpResponse ")
+                .append("{ status=").append(status.getCode())
+                .append(", contentType=").append(contentType.getValue())
+                .append(", additionalHeader=").append(additionalHeader)
+                .append(", body=").append(new String(body))
+                .append(" }")
+                .toString();
     }
 }
