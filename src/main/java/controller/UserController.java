@@ -1,13 +1,14 @@
 package controller;
 
 import db.Database;
-import dto.CreateUserDto;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.HttpRequest;
 import util.HttpResponse;
 import util.HttpStatus;
+
+import java.util.Map;
 
 public class UserController {
 
@@ -21,12 +22,18 @@ public class UserController {
 
     public void signUp(HttpRequest request, HttpResponse response) {
         try {
-            CreateUserDto createUserDto = CreateUserDto.from(request);
+            Map<String, String> queries = request.getQueries();
 
-            if (database.findUserById(createUserDto.getUserId()) != null)
+            User user = new User(
+                    queries.get(User.USER_ID),
+                    queries.get(User.PASSWORD),
+                    queries.get(User.NAME),
+                    queries.get(User.EMAIL)
+            );
+
+            if (database.findUserById(user.getUserId()) != null)
                 throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
 
-            User user = createUserDto.toEntity();
             database.addUser(user);
             logger.debug("[회원가입] id: {}", user.getUserId());
 
