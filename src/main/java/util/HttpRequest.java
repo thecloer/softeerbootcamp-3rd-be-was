@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
+
     private final String method;
     private final String uri;
     private final String protocol;
-    private final Map<String, String> properties;
-
     private final String path;
     private final Map<String, String> queries;
+    private final Map<String, String> properties;
 
     private HttpRequest(String method, String uri, String protocol, Map<String, String> properties) {
         this.method = method;
@@ -48,10 +48,10 @@ public class HttpRequest {
     }
 
     public static class Builder {
+        private final Map<String, String> properties = new HashMap<>();
         private String method;
         private String uri;
         private String protocol;
-        private final Map<String, String> properties = new HashMap<>();
 
         public Builder method(String method) {
             this.method = method;

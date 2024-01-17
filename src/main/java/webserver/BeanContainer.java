@@ -6,6 +6,7 @@ import db.Database;
 import service.UserService;
 
 public class BeanContainer {
+
     private static final Database database = new Database();
 
     private static final UserService userService = new UserService(database);
@@ -16,7 +17,6 @@ public class BeanContainer {
     public static ResourceController getResourceController() {
         return resourceController;
     }
-
     public static UserController getUserController() {
         return userController;
     }

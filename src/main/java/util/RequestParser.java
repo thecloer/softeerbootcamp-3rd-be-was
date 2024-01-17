@@ -31,14 +31,13 @@ public class RequestParser {
                 .uri(st.nextToken())
                 .protocol(st.nextToken());
     }
+
     private static void parseRequestHeader(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
         for(String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
 
             StringTokenizer st = new StringTokenizer(line, ": ");
-            if(st.countTokens() != 2)
-                continue;
-
-            builder.setProperty(st.nextToken(), st.nextToken());
+            if(st.countTokens() == 2)
+                builder.setProperty(st.nextToken(), st.nextToken());
         }
     }
 }

@@ -13,9 +13,9 @@ public class HttpResponse {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private final OutputStream out;
+    private final StringBuilder additionalHeader = new StringBuilder();
     private HttpStatus status = HttpStatus.OK;
     private ContentType contentType = ContentType.OCTET_STREAM;
-    private final StringBuilder additionalHeader = new StringBuilder();
     private byte[] body = new byte[0];
 
     public HttpResponse(OutputStream out) {

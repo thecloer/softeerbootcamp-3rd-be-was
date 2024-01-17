@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum ContentType {
+
     OCTET_STREAM("application/octet-stream"),
     HTML("text/html"),
     CSS("text/css"),

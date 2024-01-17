@@ -14,7 +14,7 @@ public class ResourceController {
     public void resourceHandler(HttpRequest request, HttpResponse response) {
         String path = redirectRoot(request.getMethod(), request.getPath());
         ContentType contentType = ContentType.getContentType(path);
-        String base = contentType == ContentType.HTML ? TEMPLATE : STATIC;
+        String base = (contentType == ContentType.HTML) ? TEMPLATE : STATIC;
 
         try {
             byte[] body = read(base, path);
