@@ -12,11 +12,7 @@ public class ResourceController {
     private static final String STATIC = "src/main/resources/static";
 
     public void resourceHandler(HttpRequest request, HttpResponse response) {
-        String path = request.getPath();
-
-        if(path.equals("/"))
-            path = "/index.html";
-
+        String path = redirectRoot(request.getMethod(), request.getPath());
         ContentType contentType = ContentType.getContentType(path);
         String base = contentType == ContentType.HTML ? TEMPLATE : STATIC;
 
@@ -31,6 +27,12 @@ public class ResourceController {
                     .addHeader("Location", "/404.html")
                     .send();
         }
+    }
+
+    private String redirectRoot(String method, String path) {
+        if ("GET".equals(method) && path.equals("/"))
+            return "/index.html";
+        return path;
     }
 
     private byte[] read(String base, String path) throws IOException {
