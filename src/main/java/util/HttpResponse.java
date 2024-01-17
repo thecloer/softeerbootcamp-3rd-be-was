@@ -59,4 +59,14 @@ public class HttpResponse {
             logger.error(e.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                " status=" + status.getCode() +
+                ", contentType=" + contentType.getValue() +
+                ", additionalHeader=" + additionalHeader +
+                ", body=" + new String(body) +
+                '}';
+    }
 }
