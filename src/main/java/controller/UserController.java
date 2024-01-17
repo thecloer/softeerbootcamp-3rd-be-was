@@ -28,13 +28,12 @@ public class UserController {
             );
 
             response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/profile.html")
+                    .addHeader("Location", "/user/profile.html?userId=" + user.getUserId())
                     .send();
 
         } catch (IllegalArgumentException e) {
-            logger.error(e.getMessage());
             response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/form.html")
+                    .addHeader("Location", "/user/form.html?message=" + e.getMessage())
                     .body(e.getMessage().getBytes())
                     .send();
         }
