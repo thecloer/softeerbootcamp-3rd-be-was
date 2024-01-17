@@ -13,6 +13,10 @@ public class ResourceController {
 
     public void resourceHandler(HttpRequest request, HttpResponse response) {
         String path = request.getPath();
+
+        if(path.equals("/"))
+            path = "/index.html";
+
         ContentType contentType = ContentType.getContentType(path);
         String base = contentType == ContentType.HTML ? TEMPLATE : STATIC;
 
