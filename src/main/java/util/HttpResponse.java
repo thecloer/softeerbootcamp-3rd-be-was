@@ -16,7 +16,7 @@ public class HttpResponse {
     private final OutputStream out;
     private final StringBuilder additionalHeader = new StringBuilder();
     private HttpStatus status = HttpStatus.OK;
-    private ContentType contentType = ContentType.OCTET_STREAM;
+    private ContentType contentType = ContentType.NONE;
     private byte[] body = new byte[0];
 
     public HttpResponse(OutputStream out) {
@@ -51,7 +51,8 @@ public class HttpResponse {
         try {
             DataOutputStream dos = new DataOutputStream(out);
             dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMessage() + " \r\n");
-            dos.writeBytes("Content-Type: " + contentType.getValue() + ";charset=utf-8\r\n");
+            if(contentType != ContentType.NONE)
+                dos.writeBytes("Content-Type: " + contentType.getValue() + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + body.length + "\r\n");
             dos.writeBytes(additionalHeader.toString());
             dos.writeBytes("\r\n");

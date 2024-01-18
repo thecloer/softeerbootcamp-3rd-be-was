@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum ContentType {
 
+    NONE(""),
     OCTET_STREAM("application/octet-stream"),
     HTML("text/html"),
     CSS("text/css"),
