@@ -9,6 +9,7 @@ public enum ContentType {
     HTML("text/html"),
     CSS("text/css"),
     JS("application/javascript"),
+    JSON("application/json"),
     ICO("image/x-icon"),
     PNG("image/png"),
     SVG("image/svg+xml"),

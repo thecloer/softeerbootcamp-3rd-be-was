@@ -7,6 +7,7 @@ import webserver.RequestHandler;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class HttpResponse {
 
@@ -34,6 +35,10 @@ public class HttpResponse {
 
     public HttpResponse body(byte[] body) {
         this.body = body;
+        return this;
+    }
+    public HttpResponse body(String body) {
+        this.body = body.getBytes(StandardCharsets.UTF_8);
         return this;
     }
 
