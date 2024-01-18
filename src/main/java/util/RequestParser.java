@@ -15,13 +15,13 @@ public class RequestParser {
         String line = br.readLine();
         HttpRequest.Builder requestBuilder = new HttpRequest.Builder();
 
-        parseRequestLine(requestBuilder, line);
-        parseRequestHeader(requestBuilder, br);
+        parseRequestHeaderLine(requestBuilder, line);
+        parseRequestHeaderFields(requestBuilder, br);
 
         return requestBuilder.build();
     }
 
-    private static void parseRequestLine(HttpRequest.Builder builder, String requestLine) {
+    private static void parseRequestHeaderLine(HttpRequest.Builder builder, String requestLine) {
         StringTokenizer st = new StringTokenizer(requestLine);
 
         if(st.countTokens() != 3)
@@ -32,12 +32,12 @@ public class RequestParser {
                 .protocol(st.nextToken());
     }
 
-    private static void parseRequestHeader(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
+    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
         for(String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
 
-            StringTokenizer st = new StringTokenizer(line, ": ");
-            if(st.countTokens() == 2)
-                builder.setProperty(st.nextToken(), st.nextToken());
+            String[] tokens = line.split(": ");
+            if(tokens.length == 2)
+                builder.setProperty(tokens[0], tokens[1]);
         }
     }
 }
