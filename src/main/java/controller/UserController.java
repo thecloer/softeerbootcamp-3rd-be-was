@@ -2,10 +2,7 @@ package controller;
 
 import model.User;
 import service.UserService;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpStatus;
-import util.UriHelper;
+import util.*;
 
 import java.util.Map;
 
@@ -28,13 +25,14 @@ public class UserController {
                     queries.get(User.EMAIL)
             );
 
-            response.status(HttpStatus.FOUND)
+            response.status(HttpStatus.CREATED)
                     .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
                     .send();
 
         } catch (IllegalArgumentException e) {
-            response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/form.html?message=" + UriHelper.encode(e.getMessage()))
+            response.status(HttpStatus.BAD_REQUEST)
+                    .contentType(ContentType.JSON)
+                    .body("{\"message\":\"" + e.getMessage() + "\"}")
                     .send();
         }
     }
