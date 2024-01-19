@@ -27,7 +27,7 @@ public class UriHelper {
         String[] params = queryString.split("&");
         for (String param : params) {
             StringTokenizer st = new StringTokenizer(param, "=");
-            if(st.countTokens() == 2)
+            if (st.countTokens() == 2)
                 queries.put(st.nextToken(), st.nextToken());
         }
 

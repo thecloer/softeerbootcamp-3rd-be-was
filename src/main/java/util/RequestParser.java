@@ -26,7 +26,7 @@ public class RequestParser {
     private static void parseRequestHeaderLine(HttpRequest.Builder builder, String requestLine) {
         StringTokenizer st = new StringTokenizer(requestLine);
 
-        if(st.countTokens() != 3)
+        if (st.countTokens() != 3)
             throw new IllegalArgumentException("Invalid Request Line");
 
         builder.method(st.nextToken())
@@ -34,11 +34,13 @@ public class RequestParser {
                 .protocol(st.nextToken());
     }
 
-    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
-        for(String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
+    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws
+            IOException {
+        for (String line = requestHeader.readLine(); !(line == null
+                || line.isEmpty()); line = requestHeader.readLine()) {
 
             String[] tokens = line.split(": ");
-            if(tokens.length == 2)
+            if (tokens.length == 2)
                 builder.setProperty(tokens[0], tokens[1]);
         }
     }

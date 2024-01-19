@@ -31,18 +31,23 @@ public class HttpRequest {
     public String getMethod() {
         return method;
     }
+
     public String getUri() {
         return uri;
     }
+
     public String getProtocol() {
         return protocol;
     }
+
     public String getProperty(String key) {
         return properties.getOrDefault(key, "");
     }
+
     public String getPath() {
         return path;
     }
+
     public String getQueryParam(String key) {
         return queries.getOrDefault(key, "");
     }

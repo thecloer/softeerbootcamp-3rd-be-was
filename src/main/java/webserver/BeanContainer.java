@@ -14,6 +14,7 @@ public class BeanContainer {
     public static ResourceController getResourceController() {
         return resourceController;
     }
+
     public static UserController getUserController() {
         return userController;
     }
