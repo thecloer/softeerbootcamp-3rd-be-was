@@ -2,9 +2,7 @@ package util.http;
 
 import util.UriHelper;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class HttpRequest {
 
@@ -45,8 +43,8 @@ public class HttpRequest {
     public String getPath() {
         return path;
     }
-    public Map<String, String> getQueries() {
-        return queries;
+    public String getQueryParam(String key) {
+        return queries.getOrDefault(key, "");
     }
 
     public static class Builder {

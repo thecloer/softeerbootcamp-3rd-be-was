@@ -8,8 +8,6 @@ import util.http.HttpRequest;
 import util.http.HttpResponse;
 import util.http.HttpStatus;
 
-import java.util.Map;
-
 public class UserController {
 
     private final UserService userService;
@@ -20,13 +18,11 @@ public class UserController {
 
     public void signUp(HttpRequest request, HttpResponse response) {
         try {
-            Map<String, String> queries = request.getQueries();
-
             User user = userService.create(
-                    queries.get(User.USER_ID),
-                    queries.get(User.PASSWORD),
-                    queries.get(User.NAME),
-                    queries.get(User.EMAIL)
+                    request.getQueryParam(User.USER_ID),
+                    request.getQueryParam(User.PASSWORD),
+                    request.getQueryParam(User.NAME),
+                    request.getQueryParam(User.EMAIL)
             );
 
             response.status(HttpStatus.CREATED)
