@@ -1,40 +1,60 @@
 package controller;
 
+import db.Database;
 import model.User;
-import service.UserService;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpStatus;
-
-import java.util.Map;
+import util.*;
+import util.http.ContentType;
+import util.http.HttpRequest;
+import util.http.HttpResponse;
+import util.http.HttpStatus;
 
 public class UserController {
 
-    private final UserService userService;
+    private final Database database;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(Database database) {
+        this.database = database;
     }
 
-    public void signUp(HttpRequest request, HttpResponse response) {
+    public HttpResponse signUp(HttpRequest request) {
         try {
-            Map<String, String> queries = request.getQueries();
+            String userId = request.getQueryParam(User.USER_ID);
+            String password = request.getQueryParam(User.PASSWORD);
+            String name = request.getQueryParam(User.NAME);
+            String email = request.getQueryParam(User.EMAIL);
 
-            User user = userService.create(
-                    queries.get(User.USER_ID),
-                    queries.get(User.PASSWORD),
-                    queries.get(User.NAME),
-                    queries.get(User.EMAIL)
-            );
+            if (userId == null || userId.isEmpty())
+                throw new IllegalArgumentException("userId가 입력되지 않았습니다.");
+            if (password == null || password.isEmpty())
+                throw new IllegalArgumentException("password가 입력되지 않았습니다.");
+            if (name == null || name.isEmpty())
+                throw new IllegalArgumentException("name이 입력되지 않았습니다.");
+            if (email == null || email.isEmpty())
+                throw new IllegalArgumentException("email이 입력되지 않았습니다.");
 
-            response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/profile.html?userId=" + user.getUserId())
-                    .send();
+            if (database.findUserById(userId) != null)
+                throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+
+            User user = new User.Builder()
+                    .userId(userId)
+                    .password(password)
+                    .name(name)
+                    .email(email)
+                    .build();
+
+            database.addUser(user);
+
+            return new HttpResponse.Builder()
+                    .status(HttpStatus.CREATED)
+                    .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
+                    .build();
 
         } catch (IllegalArgumentException e) {
-            response.status(HttpStatus.FOUND)
-                    .addHeader("Location", "/user/form.html?message=" + e.getMessage())
-                    .send();
+            return new HttpResponse.Builder()
+                    .status(HttpStatus.BAD_REQUEST)
+                    .contentType(ContentType.JSON)
+                    .body("{\"message\":\"" + e.getMessage() + "\"}")
+                    .build();
         }
     }
 }

@@ -1,13 +1,18 @@
-package util;
+package util.http;
+
+import util.UriHelper;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public enum ContentType {
+
+    NONE(""),
     OCTET_STREAM("application/octet-stream"),
     HTML("text/html"),
     CSS("text/css"),
     JS("application/javascript"),
+    JSON("application/json"),
     ICO("image/x-icon"),
     PNG("image/png"),
     SVG("image/svg+xml"),
@@ -20,6 +25,7 @@ public enum ContentType {
     WOFF2("font/woff2");
 
     private static final Map<String, ContentType> CONTENT_TYPE_MAP = new HashMap<>();
+
     static {
         CONTENT_TYPE_MAP.put("html", HTML);
         CONTENT_TYPE_MAP.put("css", CSS);
@@ -41,10 +47,15 @@ public enum ContentType {
     }
 
     public static ContentType getContentType(String path) {
-        return CONTENT_TYPE_MAP.getOrDefault(RequestParser.extractExtension(path), ContentType.OCTET_STREAM);
+        return CONTENT_TYPE_MAP.getOrDefault(UriHelper.extractExtension(path), ContentType.OCTET_STREAM);
     }
 
     public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
         return value;
     }
 }

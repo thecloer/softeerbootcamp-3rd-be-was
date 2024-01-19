@@ -1,6 +1,7 @@
-package util;
+package util.http;
 
 public enum HttpStatus {
+
     OK(200, "OK"),
     CREATED(201, "Created"),
     FOUND(302, "Found"),

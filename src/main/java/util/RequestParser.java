@@ -1,5 +1,6 @@
 package util;
 
+import util.http.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,33 +13,35 @@ public class RequestParser {
 
     public static HttpRequest parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+
         String line = br.readLine();
+        HttpRequest.Builder requestBuilder = new HttpRequest.Builder();
 
-        if(line == null)
-            throw new IOException("Empty Request");
-
-        StringTokenizer st = new StringTokenizer(line);
-        HttpRequest.Builder requestBuilder = new HttpRequest.Builder()
-                .method(st.nextToken())
-                .uri(st.nextToken())
-                .protocol(st.nextToken());
-
-        line = br.readLine();
-        while(!(line == null || line.isEmpty())) {
-            st = new StringTokenizer(line, ": ");
-            requestBuilder.setProperty(st.nextToken(), st.nextToken());
-            line = br.readLine();
-        }
+        parseRequestHeaderLine(requestBuilder, line);
+        parseRequestHeaderFields(requestBuilder, br);
 
         return requestBuilder.build();
     }
 
-    public static String extractExtension(String path) {
-        int index = path.lastIndexOf(".");
+    private static void parseRequestHeaderLine(HttpRequest.Builder builder, String requestLine) {
+        StringTokenizer st = new StringTokenizer(requestLine);
 
-        if (index == -1)
-            return "";
+        if (st.countTokens() != 3)
+            throw new IllegalArgumentException("Invalid Request Line");
 
-        return path.substring(index + 1);
+        builder.method(st.nextToken())
+                .uri(st.nextToken())
+                .protocol(st.nextToken());
+    }
+
+    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws
+            IOException {
+        for (String line = requestHeader.readLine(); !(line == null
+                || line.isEmpty()); line = requestHeader.readLine()) {
+
+            String[] tokens = line.split(": ");
+            if (tokens.length == 2)
+                builder.setProperty(tokens[0], tokens[1]);
+        }
     }
 }
