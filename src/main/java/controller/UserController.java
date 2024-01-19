@@ -23,13 +23,13 @@ public class UserController {
             String name = request.getQueryParam(User.NAME);
             String email = request.getQueryParam(User.EMAIL);
 
-            if (userId == null || userId.isEmpty())
+            if (userId.isEmpty())
                 throw new IllegalArgumentException("userId가 입력되지 않았습니다.");
-            if (password == null || password.isEmpty())
+            if (password.isEmpty())
                 throw new IllegalArgumentException("password가 입력되지 않았습니다.");
-            if (name == null || name.isEmpty())
+            if (name.isEmpty())
                 throw new IllegalArgumentException("name이 입력되지 않았습니다.");
-            if (email == null || email.isEmpty())
+            if (email.isEmpty())
                 throw new IllegalArgumentException("email이 입력되지 않았습니다.");
 
             if (database.findUserById(userId) != null)
