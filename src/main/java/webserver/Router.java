@@ -14,8 +14,8 @@ import java.util.HashMap;
 
 public class Router {
 
-    private static final UserController userController = BeanContainer.getUserController();
-    private static final ResourceController resourceController = BeanContainer.getResourceController();
+    private static final UserController userController = ApplicationContainer.getUserController();
+    private static final ResourceController resourceController = ApplicationContainer.getResourceController();
 
     private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTE_MAP;
 

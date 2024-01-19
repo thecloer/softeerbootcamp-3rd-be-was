@@ -4,7 +4,7 @@ import db.Database;
 import controller.ResourceController;
 import controller.UserController;
 
-public class BeanContainer {
+public class ApplicationContainer {
 
     private static final Database database = new Database();
 
