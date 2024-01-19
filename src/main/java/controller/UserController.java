@@ -35,7 +35,12 @@ public class UserController {
             if (database.findUserById(userId) != null)
                 throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
 
-            User user = new User(userId, password, name, email);
+            User user = new User.Builder()
+                    .userId(userId)
+                    .password(password)
+                    .name(name)
+                    .email(email)
+                    .build();
 
             database.addUser(user);
 
