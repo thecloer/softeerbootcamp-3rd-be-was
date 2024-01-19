@@ -25,6 +25,7 @@ public enum ContentType {
     WOFF2("font/woff2");
 
     private static final Map<String, ContentType> CONTENT_TYPE_MAP = new HashMap<>();
+
     static {
         CONTENT_TYPE_MAP.put("html", HTML);
         CONTENT_TYPE_MAP.put("css", CSS);
@@ -50,6 +51,11 @@ public enum ContentType {
     }
 
     public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
         return value;
     }
 }
