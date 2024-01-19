@@ -15,23 +15,23 @@ public class ResourceController {
     private static final String STATIC = "src/main/resources/static";
 
     public HttpResponse resourceHandler(HttpRequest request) {
-        String path = redirectRoot(request.getMethod(), request.getPath());
-        ContentType contentType = ContentType.getContentType(path);
-        String base = (contentType == ContentType.HTML) ? TEMPLATE : STATIC;
-
-        HttpResponse.Builder response = new HttpResponse.Builder();
         try {
+            String path = redirectRoot(request.getMethod(), request.getPath());
+            ContentType contentType = ContentType.getContentType(path);
+            String base = (contentType == ContentType.HTML) ? TEMPLATE : STATIC;
+
             byte[] body = read(base, path);
-            response
+            return new HttpResponse.Builder()
                     .status(HttpStatus.OK)
                     .contentType(contentType)
-                    .body(body);
+                    .body(body)
+                    .build();
         } catch (IOException e) {
-            response
+            return new HttpResponse.Builder()
                     .status(HttpStatus.FOUND)
-                    .addHeader("Location", "/404.html");
+                    .addHeader("Location", "/404.html")
+                    .build();
         }
-        return response.build();
     }
 
     private String redirectRoot(String method, String path) {
