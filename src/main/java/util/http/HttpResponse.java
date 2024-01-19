@@ -1,69 +1,43 @@
 package util.http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import webserver.RequestHandler;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class HttpResponse {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private final HttpStatus status;
+    private final ContentType contentType;
+    private final String additionalHeaders;
+    private final byte[] body;
 
-    private final OutputStream out;
-    private final StringBuilder additionalHeader = new StringBuilder();
-    private HttpStatus status = HttpStatus.OK;
-    private ContentType contentType = ContentType.NONE;
-    private byte[] body = new byte[0];
-
-    public HttpResponse(OutputStream out) {
-        this.out = out;
-    }
-
-    public HttpResponse status(HttpStatus status) {
+    public HttpResponse(HttpStatus status, ContentType contentType, String additionalHeaders, byte[] body) {
         this.status = status;
-        return this;
-    }
-
-    public HttpResponse contentType(ContentType contentType) {
         this.contentType = contentType;
-        return this;
-    }
-
-    public HttpResponse body(byte[] body) {
+        this.additionalHeaders = additionalHeaders;
         this.body = body;
-        return this;
-    }
-    public HttpResponse body(String body) {
-        this.body = body.getBytes(StandardCharsets.UTF_8);
-        return this;
     }
 
-    public HttpResponse addHeader(String key, String value) {
-        additionalHeader.append(key).append(": ").append(value).append("\r\n");
-        return this;
+    public Integer getStatusCode() {
+        return status.getCode();
     }
 
-    public void send() {
-        try {
-            DataOutputStream dos = new DataOutputStream(out);
-            dos.writeBytes("HTTP/1.1 " + status.getCode() + " " + status.getMessage() + " \r\n");
-            if(contentType != ContentType.NONE)
-                dos.writeBytes("Content-Type: " + contentType.getValue() + ";charset=utf-8\r\n");
-            dos.writeBytes("Content-Length: " + body.length + "\r\n");
-            dos.writeBytes(additionalHeader.toString());
-            dos.writeBytes("\r\n");
+    public String getStatusMessage() {
+        return status.getMessage();
+    }
 
-            if(body.length > 0)
-                dos.write(body, 0, body.length);
+    public ContentType getContentType() {
+        return contentType;
+    }
 
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public Integer getBodyLength() {
+        return body.length;
+    }
+
+    public byte[] getBody() {
+        return body;
+    }
+
+    public String getAdditionalHeaders() {
+        return additionalHeaders;
     }
 
     @Override
@@ -72,9 +46,45 @@ public class HttpResponse {
                 .append("HttpResponse ")
                 .append("{ status=").append(status.getCode())
                 .append(", contentType=").append(contentType.getValue())
-                .append(", additionalHeader=").append(additionalHeader)
+                .append(", additionalHeader=").append(additionalHeaders)
                 .append(", body=").append(new String(body))
                 .append(" }")
                 .toString();
+    }
+
+    public static class Builder {
+        private final StringBuilder additionalHeader = new StringBuilder();
+        private HttpStatus status;
+        private ContentType contentType = ContentType.NONE;
+        private byte[] body = new byte[0];
+
+        public Builder status(HttpStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder contentType(ContentType contentType) {
+            this.contentType = contentType;
+            return this;
+        }
+
+        public Builder body(byte[] body) {
+            this.body = body;
+            return this;
+        }
+
+        public Builder body(String body) {
+            this.body = body.getBytes(StandardCharsets.UTF_8);
+            return this;
+        }
+
+        public Builder addHeader(String key, String value) {
+            additionalHeader.append(key).append(": ").append(value).append("\r\n");
+            return this;
+        }
+
+        public HttpResponse build() {
+            return new HttpResponse(status, contentType, additionalHeader.toString(), body);
+        }
     }
 }

@@ -16,7 +16,7 @@ public class UserController {
         this.database = database;
     }
 
-    public void signUp(HttpRequest request, HttpResponse response) {
+    public HttpResponse signUp(HttpRequest request) {
         try {
             String userId = request.getQueryParam(User.USER_ID);
             String password = request.getQueryParam(User.PASSWORD);
@@ -44,15 +44,17 @@ public class UserController {
 
             database.addUser(user);
 
-            response.status(HttpStatus.CREATED)
+            return new HttpResponse.Builder()
+                    .status(HttpStatus.CREATED)
                     .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
-                    .send();
+                    .build();
 
         } catch (IllegalArgumentException e) {
-            response.status(HttpStatus.BAD_REQUEST)
+            return new HttpResponse.Builder()
+                    .status(HttpStatus.BAD_REQUEST)
                     .contentType(ContentType.JSON)
                     .body("{\"message\":\"" + e.getMessage() + "\"}")
-                    .send();
+                    .build();
         }
     }
 }
