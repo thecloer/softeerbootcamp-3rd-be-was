@@ -23,8 +23,9 @@ public class Router {
         ROUTE_MAP = Collections.unmodifiableMap(routeMap);
     }
 
-    public static BiConsumer<HttpRequest, HttpResponse> route(HttpRequest httpRequest) {
+    public static void route(HttpRequest httpRequest, HttpResponse httpResponse) {
         String routeKey = httpRequest.getMethod() + " " + httpRequest.getPath();
-        return ROUTE_MAP.getOrDefault(routeKey, resourceController::resourceHandler);
+        BiConsumer<HttpRequest, HttpResponse> handler = ROUTE_MAP.getOrDefault(routeKey, resourceController::resourceHandler);
+        handler.accept(httpRequest, httpResponse);
     }
 }

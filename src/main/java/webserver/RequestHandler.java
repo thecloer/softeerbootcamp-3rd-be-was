@@ -2,7 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.function.BiConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +26,7 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getUri());
 
-            BiConsumer<HttpRequest, HttpResponse> handler = Router.route(request);
-
-            handler.accept(request, response);
+            Router.route(request, response);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
