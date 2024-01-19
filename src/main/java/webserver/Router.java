@@ -2,8 +2,8 @@ package webserver;
 
 import controller.ResourceController;
 import controller.UserController;
-import util.HttpRequest;
-import util.HttpResponse;
+import util.http.HttpRequest;
+import util.http.HttpResponse;
 
 import java.util.Collections;
 import java.util.HashMap;

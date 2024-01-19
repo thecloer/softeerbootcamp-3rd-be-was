@@ -1,4 +1,6 @@
-package util;
+package util.http;
+
+import util.UriHelper;
 
 import java.util.HashMap;
 import java.util.Map;

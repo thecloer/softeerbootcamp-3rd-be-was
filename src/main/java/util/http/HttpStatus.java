@@ -1,4 +1,4 @@
-package util;
+package util.http;
 
 public enum HttpStatus {
 

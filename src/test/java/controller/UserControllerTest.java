@@ -4,10 +4,10 @@ import db.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.UserService;
-import util.ContentType;
-import util.HttpRequest;
-import util.HttpResponse;
-import util.HttpStatus;
+import util.http.ContentType;
+import util.http.HttpRequest;
+import util.http.HttpResponse;
+import util.http.HttpStatus;
 
 import java.io.ByteArrayOutputStream;
 
