@@ -3,7 +3,6 @@ package controller;
 import db.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.UserService;
 import util.http.ContentType;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
@@ -20,8 +19,7 @@ public class UserControllerTest {
     @BeforeEach
     public void setUp() {
         Database database = new Database();
-        UserService userService = new UserService(database);
-        userController = new UserController(userService);
+        userController = new UserController(database);
     }
 
     @Test
