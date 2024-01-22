@@ -1,16 +1,10 @@
 package util;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 public class UriHelper {
-
-    public static String encode(String path) {
-        return URLEncoder.encode(path, StandardCharsets.UTF_8);
-    }
 
     public static String extractExtension(String path) {
         int index = path.lastIndexOf(".");

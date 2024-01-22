@@ -2,7 +2,6 @@ package controller;
 
 import db.Database;
 import model.User;
-import util.*;
 import util.http.ContentType;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
@@ -46,7 +45,7 @@ public class UserController {
 
             return new HttpResponse.Builder()
                     .status(HttpStatus.CREATED)
-                    .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
+                    .addHeader("Location", "/")
                     .build();
 
         } catch (IllegalArgumentException e) {
