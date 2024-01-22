@@ -215,7 +215,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 - [ ] 불필요한 외부 의존성 제거
     - 자바 기본 패키지, Junit, AssertJ, Logger 외의 외부 패키지는 사용하지 않는다.
     - Lombok 은 사용하지 않는다.
-- [ ] java.nio 에서 java.io 로 변환
+- ✅ java.nio 에서 java.io 로 변환
     - 만약 java.nio를 사용하고 있었다면 java.io를 사용하도록 수정한다.
 - [ ] POST로 수정
     - http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한다.
@@ -224,6 +224,27 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 구현 내용
 
+- 정적 파일 읽는 부분 `java.nio`에서 `java.io`로 변경
+  - [기타](#javanio와-javaio)에 정리
+
 ### 고민 사항
 
 ### 기타
+
+#### `java.nio`와 `java.io`
+`java.io`는 java 1.0 부터 지원되는 I/O 패키지로 전통적인 블로킹 I/O 모델을 사용한다. 
+스트림 기반 I/O로 바이트 스트림(InputStream, OutputStream)과 문자 스트림(Reader, Writer)으로 나뉜다.
+바이트 스트림의 경우 1바이트씩 읽고 쓰기 때문에 일반적으로 느린 성능을 보인다. 
+이 경우 `BufferedInputStream`, `BufferedOutputStream`을 사용해 버퍼를 통한 성능을 개선할 수 있다.
+java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한다.  
+
+`java.nio`는 java 1.4 부터 지원되는 I/O 패키지로 블로킹 I/O 모델에 더해 논블로킹 I/O 모델을 지원한다.
+`java.nio`는 기본적으로 버퍼를 이용하며 채널 기반 I/O를 한다. 
+[채널](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Channel.html)은 I/O 작업을 수행할 수 있는 엔티티(파일, 소켓)에 대한 연결을 나타낸다.
+채널 기반 I/O와 스트림 기반 I/O의 큰 차이점은 채널은 양방성으로 읽기와 쓰기 모두 지원한다는 점이다.
+채널 역시 기본적으로 블로킹 I/O로 동작하며 [configureBlocking(false)](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/spi/AbstractSelectableChannel.html#configureBlocking-boolean-)와 같은 설정을 통해 논블로킹 모드로 전환할 수 있다.
+이렇게 논블로킹 I/O로 동작하는 채널들은 [Selector](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/package-summary.html)에 등록 되어 관리될 수 있다.
+`Selector`를 이용하면 단일 스레드에서 여러 채널의 I/O 작업을 효율적으로 모니터링하고 관리할 수 있다.
+
+과제에서 제작 중인 웹서버의 경우 `Thread per Request` 방식으로 동작하며 요청당 최대 하나의 정적 페이지를 마지막에 읽어온다.
+따라서 `java.nio`를 사용해 non-blocking 비동기 I/O로 구현했을 때 얻을 수 있는 이점은 크지 않다.
