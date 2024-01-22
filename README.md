@@ -21,31 +21,31 @@
 
 ### 기능 요구사항
 
-- http://localhost:8080/index.html 로 접속했을 때 `src/main/resources/templates` 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
-- 서버로 들어오는 HTTP Request의 내용을 읽고 적절하게 파싱해서 로거(log.debug)를 이용해 출력한다.
+- ✅ http://localhost:8080/index.html 로 접속했을 때 `src/main/resources/templates` 디렉토리의 index.html 파일을 읽어 클라이언트에 응답한다.
+- ✅ 서버로 들어오는 HTTP Request의 내용을 읽고 적절하게 파싱해서 로거(log.debug)를 이용해 출력한다.
 
 ### 프로그래밍 요구사항
 
-- 프로젝트 분석
+- ✅ 프로젝트 분석
     - 단순히 요구사항 구현이 목표가 아니라 프로젝트의 동작 원리에 대해 파악한다.
-- 구조 변경
+- ✅ 구조 변경
     - 자바 스레드 모델에 대해 학습한다. 버전별로 어떤 변경점이 있었는지와 향후 지향점에 대해서도 학습해 본다.
     - 자바 Concurrent 패키지에 대해 학습한다.
     - 기존의 프로젝트는 Java Thread 기반으로 작성되어 있다. 이를 Concurrent 패키지를 사용하도록 변경한다.
-- OOP와 클린코딩
+- ✅ OOP와 클린코딩
     - 주어진 소스코드를 기반으로 기능요구사항을 만족하는 코드를 작성한다.
     - 유지보수에 좋은 구조에 대해 고민하고 코드를 개선해 본다.
     - 웹 리소스 파일은 제공된 파일을 수정해서 사용한다. (직접 작성해도 무방하다.)
 
 ### 구현 내용
 
-- ✅ Http request 로깅
+- Http request 로깅
     - "[ {protocol} {method} ] {path?query#fragment}"
-- ✅ 정적 파일 응답
+- 정적 파일 응답
     - 요청 리소스의 확장자에 따라 응답 헤더의 `Content-Type`설정, 리소스 경로 분기 응답
     - `.html` -> `resources/templates`
     - 이외 -> `resources/static`
-- ✅ `Concurrent` 패키지가 제공하는 스레드 풀을 이용해 요청 처리
+- `Concurrent` 패키지가 제공하는 스레드 풀을 이용해 요청 처리
     - 기존 `Thread` 클래스로 요청마다 스레드를 생성, 제거 하며 요청을 처리하는 방식에서 요청을 큐에 넣고 스레드 풀에서 사용 가능한 스레드가 요청을 꺼내 처리하는 방식으로 변경
 
 ### 고민 사항
@@ -77,7 +77,7 @@
 
 ### 기능 요구사항
 
-- HTTP GET으로 회원가입
+- ✅ HTTP GET으로 회원가입
     - "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시한다.
     - 이 폼을 통해서 회원가입을 할 수 있다.
 
@@ -87,19 +87,19 @@
   ```
   /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
   ```
-- HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
-- 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
-- `Junit`을 활용한 단위 테스트를 적용해 본다.
+- ✅ HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
+- ✅ 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
+- ✅ `Junit`을 활용한 단위 테스트를 적용해 본다.
 
 ### 구현 내용
 
-- ✅ "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
-- ✅ 폼을 통한 회원가입
+- "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
+- 폼을 통한 회원가입
     - 회원가입 성공시 `/user/profile.html?userId={userId}`로 리다이렉트
     - 회원가입 실패시 `/user/form.html?message={errorMessage}`로 리다이렉트
         - step 3 완료 이후 프론트에서 메세지 표시 구현할 예정
-- ✅ 잘못된 경로 접근 시 404 페이지 리다이렉트
-- ✅ `Junit`을 활용한 단위 테스트 적용
+- 잘못된 경로 접근 시 404 페이지 리다이렉트
+- `Junit`을 활용한 단위 테스트 적용
     - `UserControllerTest`: 회원가입 요청을 받고 응답하는 테스트
     - `UserServiceTest`: DB에 회원 저장, 입력 형식 예외 테스트
     - 테스트의 편의를 위해 DI 도입
@@ -152,25 +152,25 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 프로그래밍 요구사항
 
-- 구현
+- ✅ 구현
     - 기능요구사항이 정상적으로 동작하도록 구현한다.
-- 검증
+- ✅ 검증
     - 서버의 static 폴더에 있는 정적 컨텐츠들에 대한 요청이 브라우저에서 정상적으로 처리되는지 확인해 본다.
 
 ### 구현 내용
 
-- ✅ 다양한 컨텐츠 타입을 지원
+- 다양한 컨텐츠 타입을 지원
     - step 3를 보지못하고 step 1 정적 파일 응답에서 이미 구현
     - html, css, js, ico, png, svg, txt, eot, ttf, woff, woff2 지원
-- ✅ step 2에서 구현했던 회원가입 실패 시 클라이언트로 내려준 메세지 프론트에서 표시
+- step 2에서 구현했던 회원가입 실패 시 클라이언트로 내려준 메세지 프론트에서 표시
     - 회원가입 실패 시 메세지 JSON 형태로 응답
         - 프론트에서 JSON 형태로 응답을 받아 메세지 표시
     - 회원가입 성공 시 생성한 데이터를 받을 수 있는 URI를 응답 헤더에 포함해 응답
         - `Location: /user/profile.html?userId={userId}`
         - 프론트에서 응답받은 URI로 회원 정보 요청
         - [참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
-- ✅ 유틸 클래스 테스트 코드 추가
-- ✅ 클린 코드, OOP 리팩터링
+- 유틸 클래스 테스트 코드 추가
+- 클린 코드, OOP 리팩터링
     - 메서드 가능하면 10줄 이하
     - 한 메서드는 하나의 기능
     - else 사용 지양
@@ -207,17 +207,17 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기능 요구사항
 
-- 로그인을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
-- 가입을 완료하면 /index.html 페이지로 이동한다.
+- [ ] 로그인을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
+- [ ] 가입을 완료하면 /index.html 페이지로 이동한다.
 
 ### 프로그래밍 요구사항
 
-- 불필요한 외부 의존성 제거
+- [ ] 불필요한 외부 의존성 제거
     - 자바 기본 패키지, Junit, AssertJ, Logger 외의 외부 패키지는 사용하지 않는다.
     - Lombok 은 사용하지 않는다.
-- java.nio 에서 java.io 로 변환
+- [ ] java.nio 에서 java.io 로 변환
     - 만약 java.nio를 사용하고 있었다면 java.io를 사용하도록 수정한다.
-- POST로 수정
+- [ ] POST로 수정
     - http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한다.
     - 나머지 회원가입 기능이 정상적으로 동작하도록 구현한다.
     - 가입 후 페이지 이동을 위해 HTTP redirection 기능을 구현한다.
