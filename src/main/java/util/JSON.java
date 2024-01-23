@@ -57,4 +57,22 @@ public class JSON {
     static private Boolean isStringType(String stringifiedJson) {
         return stringifiedJson.startsWith("\"") && stringifiedJson.endsWith("\"");
     }
+
+    static public String stringify(Map<String, String> object) {
+        StringBuilder stringBuilder = new StringBuilder("{");
+
+        for (Map.Entry<String, String> entry : object.entrySet()) {
+            stringBuilder.append("\"").append(entry.getKey()).append("\":");
+            if (entry.getValue() == null) {
+                stringBuilder.append("null,");
+                continue;
+            }
+            stringBuilder.append("\"").append(entry.getValue()).append("\",");
+        }
+        stringBuilder
+                .deleteCharAt(stringBuilder.length() - 1)
+                .append("}");
+
+        return stringBuilder.toString();
+    }
 }
