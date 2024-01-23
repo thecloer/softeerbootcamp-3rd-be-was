@@ -61,4 +61,17 @@ class JSONTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("JSON 형식이 아닙니다. (key 형식이 잘못됐습니다.)");
     }
+
+    @Test
+    @DisplayName("JSON.stringify() 성공: 문자열, null")
+    void stringify() {
+        // given
+        Map<String, String> object = Map.of("key1", "value1", "key2", "value2", "key3", null);
+
+        // when
+        String stringifiedJson = JSON.stringify(object);
+
+        // then
+        assertThat(stringifiedJson).isEqualTo("{\"key1\":\"value1\",\"key2\":\"value2\",\"key3\":null}");
+    }
 }
