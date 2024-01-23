@@ -18,29 +18,19 @@ public class UserController {
 
     public HttpResponse signUp(HttpRequest request) {
         try {
-            String userId = request.getQueryParam(User.USER_ID);
-            String password = request.getQueryParam(User.PASSWORD);
-            String name = request.getQueryParam(User.NAME);
-            String email = request.getQueryParam(User.EMAIL);
+            User user = UserBuilder.fromStringifiedJson(request.getBody());
 
-            if (userId.isEmpty())
+            if (user.getUserId().isEmpty())
                 throw new IllegalArgumentException("userId가 입력되지 않았습니다.");
-            if (password.isEmpty())
+            if (user.getPassword().isEmpty())
                 throw new IllegalArgumentException("password가 입력되지 않았습니다.");
-            if (name.isEmpty())
+            if (user.getName().isEmpty())
                 throw new IllegalArgumentException("name이 입력되지 않았습니다.");
-            if (email.isEmpty())
+            if (user.getEmail().isEmpty())
                 throw new IllegalArgumentException("email이 입력되지 않았습니다.");
 
-            if (database.findUserById(userId) != null)
+            if (database.findUserById(user.getUserId()) != null)
                 throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-
-            User user = new UserBuilder()
-                    .userId(userId)
-                    .password(password)
-                    .name(name)
-                    .email(email)
-                    .build();
 
             database.addUser(user);
 

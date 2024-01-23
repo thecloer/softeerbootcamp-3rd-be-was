@@ -1,14 +1,15 @@
 package model.User;
 
-public class User {
-    public static final String USER_ID = "userId";
-    public static final String PASSWORD = "password";
-    public static final String NAME = "name";
-    public static final String EMAIL = "email";
+import annotation.Column;
 
+public class User {
+    @Column("userId")
     private String userId;
+    @Column("password")
     private String password;
+    @Column("name")
     private String name;
+    @Column("email")
     private String email;
 
     public User(String userId, String password, String name, String email) {
