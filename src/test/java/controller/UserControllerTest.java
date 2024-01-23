@@ -38,7 +38,7 @@ public class UserControllerTest {
         // then
         HttpResponse expected = new HttpResponse.Builder()
                 .status(HttpStatus.CREATED)
-                .addHeader("Location", "/user/profile.html?userId=test_id")
+                .setHeader("Location", "/user/profile.html?userId=test_id")
                 .build();
 
         assertThat(response.toString())
