@@ -5,19 +5,18 @@
     const $message = document.getElementById("form-message");
 
     const redirectByPath = (path) => window.location.href = window.origin + path;
-    const formDataToUrl = (formData) => {
-        const url = new URL("/user/create", window.location.origin);
-        for (const [key, value] of formData.entries())
-            url.searchParams.append(key, value);
-        return url;
-    }
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
         const formData = new FormData($form);
-        const url = formDataToUrl(formData);
 
-        const response = await fetch(url, {method: "GET"});
+        const response = await fetch("/user/create", {
+            method: "POST",
+            body: JSON.stringify(Object.fromEntries(formData.entries())),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
 
         if (response.ok) {
             const redirectPath = response.headers.get("Location");
