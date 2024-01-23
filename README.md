@@ -207,17 +207,17 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기능 요구사항
 
-- [ ] 회원가입을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
+- ✅ 회원가입을 GET에서 POST로 수정 후 정상 동작하도록 구현한다.
 - ✅ 가입을 완료하면 /index.html 페이지로 이동한다.
 
 ### 프로그래밍 요구사항
 
-- [ ] 불필요한 외부 의존성 제거
+- ✅ 불필요한 외부 의존성 제거
     - 자바 기본 패키지, Junit, AssertJ, Logger 외의 외부 패키지는 사용하지 않는다.
     - Lombok 은 사용하지 않는다.
 - ✅ java.nio 에서 java.io 로 변환
     - 만약 java.nio를 사용하고 있었다면 java.io를 사용하도록 수정한다.
-- [ ] POST로 수정
+- ✅ POST로 수정
     - http://localhost:8080/user/form.html 파일의 form 태그 method를 get에서 post로 수정한다.
     - 나머지 회원가입 기능이 정상적으로 동작하도록 구현한다.
     - 가입 후 페이지 이동을 위해 HTTP redirection 기능을 구현한다.
