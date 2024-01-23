@@ -36,7 +36,7 @@ public class UserController {
 
             return new HttpResponse.Builder()
                     .status(HttpStatus.CREATED)
-                    .addHeader("Location", "/")
+                    .setHeader("Location", "/")
                     .build();
 
         } catch (IllegalArgumentException e) {

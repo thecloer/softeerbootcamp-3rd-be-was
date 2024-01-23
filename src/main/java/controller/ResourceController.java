@@ -30,7 +30,7 @@ public class ResourceController {
         } catch (IOException e) {
             return new HttpResponse.Builder()
                     .status(HttpStatus.FOUND)
-                    .addHeader("Location", "/404.html")
+                    .setHeader("Location", "/404.html")
                     .build();
         }
     }
