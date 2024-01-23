@@ -1,8 +1,9 @@
 package model.User;
 
 import annotation.Column;
+import model.Model;
 
-public class User {
+public class User extends Model {
     @Column("userId")
     private String userId;
     @Column("password")
@@ -11,6 +12,10 @@ public class User {
     private String name;
     @Column("email")
     private String email;
+
+    private User() {
+        super();
+    }
 
     public User(String userId, String password, String name, String email) {
         this.userId = userId;
