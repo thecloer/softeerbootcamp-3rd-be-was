@@ -21,7 +21,7 @@ public class Router {
 
     static {
         Map<String, Function<HttpRequest, HttpResponse>> routeMap = new HashMap<>();
-        routeMap.put("GET /user/create", userController::signUp);
+        routeMap.put("POST /user/create", userController::signUp);
 
         ROUTE_MAP = Collections.unmodifiableMap(routeMap);
     }
