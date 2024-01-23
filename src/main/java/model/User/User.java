@@ -1,10 +1,11 @@
-package model;
+package model.User;
 
 public class User {
     public static final String USER_ID = "userId";
     public static final String PASSWORD = "password";
     public static final String NAME = "name";
     public static final String EMAIL = "email";
+
     private String userId;
     private String password;
     private String name;
@@ -42,36 +43,5 @@ public class User {
                 .append(", email=").append(email)
                 .append("]")
                 .toString();
-    }
-
-    public static class Builder {
-        private String userId;
-        private String password;
-        private String name;
-        private String email;
-
-        public Builder userId(String userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public Builder password(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder email(String email) {
-            this.email = email;
-            return this;
-        }
-
-        public User build() {
-            return new User(userId, password, name, email);
-        }
     }
 }

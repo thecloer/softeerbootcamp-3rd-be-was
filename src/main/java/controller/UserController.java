@@ -1,7 +1,8 @@
 package controller;
 
 import db.Database;
-import model.User;
+import model.User.User;
+import model.User.UserBuilder;
 import util.http.ContentType;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
@@ -34,7 +35,7 @@ public class UserController {
             if (database.findUserById(userId) != null)
                 throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
 
-            User user = new User.Builder()
+            User user = new UserBuilder()
                     .userId(userId)
                     .password(password)
                     .name(name)

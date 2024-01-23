@@ -1,7 +1,8 @@
 package controller;
 
 import db.Database;
-import model.User;
+import model.User.User;
+import model.User.UserBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import util.http.ContentType;
@@ -47,7 +48,7 @@ public class UserControllerTest {
     @Test
     public void 회원가입_실패_중복_아이디() {
         // given
-        User existingUser = new User.Builder()
+        User existingUser = new UserBuilder()
                 .userId("test_id")
                 .password("test_pw")
                 .name("test_name")
