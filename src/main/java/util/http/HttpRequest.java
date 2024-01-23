@@ -10,13 +10,15 @@ public class HttpRequest {
     private final String uri;
     private final String protocol;
     private final String path;
+    private final String body;
     private final Map<String, String> queries;
     private final Map<String, String> properties;
 
-    private HttpRequest(String method, String uri, String protocol, Map<String, String> properties) {
+    private HttpRequest(String method, String uri, String protocol, String body, Map<String, String> properties) {
         this.method = method;
         this.uri = uri;
         this.protocol = protocol;
+        this.body = body;
         this.properties = properties;
 
         String[] splittedString = uri.split("\\?");
@@ -48,6 +50,10 @@ public class HttpRequest {
         return path;
     }
 
+    public String getBody() {
+        return body;
+    }
+
     public String getQueryParam(String key) {
         return queries.getOrDefault(key, "");
     }
@@ -57,6 +63,7 @@ public class HttpRequest {
         private String method;
         private String uri;
         private String protocol;
+        private String body = "";
 
         public Builder method(String method) {
             this.method = method;
@@ -73,13 +80,26 @@ public class HttpRequest {
             return this;
         }
 
+        public Builder body(String body) {
+            this.body = body;
+            return this;
+        }
+
         public Builder setProperty(String key, String value) {
             this.properties.put(key, value);
             return this;
         }
 
+        public String getMethod() {
+            return method;
+        }
+
+        public String getProperty(String key) {
+            return this.properties.getOrDefault(key, "");
+        }
+
         public HttpRequest build() {
-            return new HttpRequest(method, uri, protocol, properties);
+            return new HttpRequest(method, uri, protocol, body, properties);
         }
     }
 }
