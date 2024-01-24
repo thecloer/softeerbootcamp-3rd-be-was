@@ -18,6 +18,11 @@ public class HttpResponse implements HttpMessage {
         this.body = body;
     }
 
+    public void setHeader(String key, String value) {
+        additionalHeaders.put(key, value);
+    }
+
+    @Override
     public Integer getStatusCode() {
         return status.getCode();
     }
