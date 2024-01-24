@@ -3,10 +3,13 @@ package controller;
 import db.Database;
 import model.User.User;
 import model.User.UserBuilder;
+import util.JSON;
 import util.http.ContentType;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
 import util.http.HttpStatus;
+
+import java.util.Map;
 
 public class UserController {
 
@@ -40,10 +43,11 @@ public class UserController {
                     .build();
 
         } catch (IllegalArgumentException e) {
+            String message = JSON.stringify(Map.of("message", e.getMessage()));
             return new HttpResponse.Builder()
                     .status(HttpStatus.BAD_REQUEST)
                     .contentType(ContentType.JSON)
-                    .body("{\"message\":\"" + e.getMessage() + "\"}")
+                    .body(message)
                     .build();
         }
     }
