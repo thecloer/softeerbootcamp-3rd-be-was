@@ -307,3 +307,30 @@ java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한�
 HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
 때 case-insensitive하게 고려해야한다.  
 [RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names)
+
+## 5단계 - 쿠키를 이용한 로그인
+
+### 학습 키워드 & 학습 목표
+
+> HTTP Cookie, HTTP Session
+
+- 쿠키와 세션을 이용한 로그인 방식을 이해하고 직접 구현할 수 있다.
+
+### 기능 요구사항
+
+- [ ] 가입한 회원 정보로 로그인을 할 수 있다.
+- [ ] [로그인] 메뉴를 클릭하면 /user/login.html 으로 이동해 로그인할 수 있다.
+- [ ] 로그인이 성공하면 index.html로 이동한다.
+- [ ] 로그인이 실패하면 /user/login_failed.html로 이동한다.
+
+### 프로그래밍 요구사항
+
+- [ ] 로그인이 성공할 경우 HTTP 헤더의 쿠키 값을 SID=세션 ID 로 응답한다.
+- [ ] 세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
+- [ ] 서버는 세션 아이디에 해당하는 User 정보에 접근할 수 있어야 한다.
+
+### 구현 내용
+
+### 고민 사항
+
+### 기타
