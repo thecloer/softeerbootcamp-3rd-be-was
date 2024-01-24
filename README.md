@@ -51,10 +51,12 @@
 ### 고민 사항
 
 - 요청 url에서 확장자를 추출하는 메서드는 어떤 클래스에 구현해야할까?
-    - ContentType enum에 private 메서드로 구현 vs 새로운 클래스 혹은 URI extends 한 클래스
-    - -> 우선 아직은 사용되는 곳이 Content-Type 뿐이므로 ContentType enum에 private 메서드로 구현
+    - `ContentType` enum에 private 메서드로 구현 vs 새로운 클래스 혹은 URI extends 한 클래스
+    - 우선 아직은 사용되는 곳이 Content-Type 뿐이므로 ContentType enum에 private 메서드로 구현
     - 추후 필요시 유틸 클래스 혹은 URI 클래스를 상속받는 클래스를 만들어 빼낼 예정
-- 요청 예외처리(오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?)
+
+
+- 오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?
     - step-2에서 라우터를 구현 한뒤 예외에 따라 오류 메세지 혹은 오류 페이지 응답 해보자
 
 ### 기타
@@ -63,7 +65,7 @@
     - [MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
     - [최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
 - 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리
-    - 블로그 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+    - 블로그 정리 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
 
 ## 2단계 - GET으로 회원가입
 
@@ -87,7 +89,7 @@
   ```
   /create?userId=javajigi&password=password&name=%EB%B0%95%EC%9E%AC%EC%84%B1&email=javajigi%40slipp.net
   ```
-- ✅ HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 model.User 클래스에 저장한다.
+- ✅ HTML과 URL을 비교해 보고 사용자가 입력한 값을 파싱해 `User` 클래스에 저장한다.
 - ✅ 유지보수가 편한 코드가 되도록 코드품질을 개선해 본다.
 - ✅ `Junit`을 활용한 단위 테스트를 적용해 본다.
 
@@ -111,6 +113,8 @@
 - `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
     - `/`를 `/index.html`로 매핑하는 것은 루트 경로가 비어있을 경우 표시할 기본 경로 설정이라 생각
     - 기본 경로 설정은 라우터에서 필터링되지 않은 경로를 처리하는 `ResourceController`에 구현
+
+
 - `ApplicationContainer`와 `UserService`가 꼭 필요할까?
     - `ApplicationContainer`
         - static 변수로 생성된 DB의 경우 테스트마다 DB 초기화 필요
@@ -122,9 +126,11 @@
     - `UserService`
         - 테스트 코드 작성의 편의를 위해 도입
         - 컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리
+
+
 - 오류 응답 상태코드
-    - 없는 경로 요청 시 not found 404 응답 vs 302 리다이렉트 /404.html 응답
-    - 회원가입 실패 시 bad request 400 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트
+    - 없는 경로 요청 시 404 Not Found 응답 vs 302 /404.html 페이지로 리다이렉트 응답
+    - 회원가입 실패 시 400 Bad Request 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트
     - 사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현
 
 ### 기타
@@ -170,7 +176,9 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - 프론트에서 응답받은 URI로 회원 정보 요청
         - [참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
 - 유틸 클래스 테스트 코드 추가
-- 클린 코드, OOP 리팩터링
+- 리팩터링
+    - 디미터의 법칙
+      - [commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c)
     - 메서드 가능하면 10줄 이하
     - 한 메서드는 하나의 기능
     - else 사용 지양
@@ -178,16 +186,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 고민 사항
 
-- step 2에서 고민했던 오류 응답 상태코드에 대한 고민
-    - ~~없는 경로 요청 시 not found 404 응답 vs 302 리다이렉트 /404.html 응답~~
-    - ~~회원가입 실패 시 bad request 400 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트~~
-    - ~~사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현~~
-    - 서버와 클라이언트의 역할을 분리하기 위해 서버는 요청에 대한 응답만 처리하도록 변경
-    - 클라이언트가 응답에 따른 다음 행동을 결정하도록 변경
-    - 회원가입 실패 시 400 bad request 상태코드와 메세지를 포함해 json 응답
-    - 회원가입 성공 시 201 created 상태코드와 생성한 데이터를 받을 수 있는 URI를 응답 헤더에 포함해
-      응답 ([참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created))
-- step 2에서 고민했던 서비스 레이어에 대한 고민
+- [step 2의 고민 사항](#고민-사항-1), 서비스 레이어에 대한 고민 사항에 대한 구현 변경
     - ~~테스트 코드 작성의 편의를 위해 도입~~
     - ~~컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리~~
     - `RequestHandler`와 컨트롤러의 역할을 명확하게 분리
@@ -195,6 +194,31 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - 컨트롤러는 요청에 대한 처리를 통해 응답 생성
         - 요청을 클라이언트로 전송하는 부분을 `RequestHandler`로 옮기니 컨트롤러의 테스트가 쉬워짐
         - 컨트롤러의 테스트가 어려워 생성했던 `UserService`는 도입했던 이유는 사라졌으므로 제거
+
+
+- [step 2의 고민 사항](#고민-사항-1), 오류 응답 상태코드에 대한 고민 사항에 대한 구현 변경
+    - ~~없는 경로 요청 시 not found 404 응답 vs 302 리다이렉트 /404.html 응답~~
+    - ~~회원가입 실패 시 bad request 400 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트~~
+    - ~~사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현~~
+    - 서버와 클라이언트의 역할을 분리하기 위해 서버는 요청에 대한 응답만 처리하도록 변경
+    - 클라이언트가 응답에 따른 다음 행동을 결정하도록 변경
+    - 회원가입 실패 시 400 Bad Request 상태코드와 메세지를 포함해 json 응답
+    - 회원가입 성공 시 201 Created 상태코드와 함께 생성한 데이터를 받을 수 있는 URI를 응답 필드(`Location`)에 포함해
+      응답 ([RFC HTTP status codes 참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created))
+
+### 기타
+
+#### 드미어 법칙
+
+`드미어 법칙(Demeter's Law)` 혹은 `최소 지식 원칙(Principle of Least Knowledge)`은 객체 지향 프로그래밍에서 객체 간의 상호작용을 설계할 때 사용되는 지침 중 하나다.
+이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다.
+객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의 내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
+
+`Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한 부분([commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c))을 보면 직관적으로 이해할 수 있다.  
+이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리 스트링은 `Request`객체에 `Map`형태로 담겨있다는 것을 알아야 한다는 것을 의미한다.  
+변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.  
+예시가 기본 타입처럼 자주 쓰이는 `Map`이기 때문에 적절한 예시인지는 모르겠으나 내부 구조를 몰라도 사용할 수 있는 인터페이스로 변경했다는 점에서 `드미어 법칙`을 적용한 예시라고 생각한다.
+
 
 ## 4단계 - POST로 회원 가입
 
