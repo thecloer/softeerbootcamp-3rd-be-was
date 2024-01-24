@@ -248,27 +248,62 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 구현 내용
 
-- 정적 파일 읽는 부분 `java.nio`에서 `java.io`로 변경
-  - [기타](#javanio와-javaio)에 정리
+- 정적 파일 읽는 부분 `java.nio`에서 `java.io`로 변경 ([기타](#javanio와-javaio)에 정리)
+- POST 메서드를 이용한 회원 가입 구현
+    - JSON 형태로 요청, 응답
+    - 간단한 JSON parser, stringifier 구현
+    - 어노테이션과 리플렉션을 이용한 요청 바디를 모델 객체로 변환하는 기능 구현
 
 ### 고민 사항
+
+- 응답객체는 요청의 바디를 어떻게 처리해야 범용적으로 사용할 수 있을까?
+    - 요청의 바디는 JSON, plain text등 다양한 형태일 수 있다.
+    - 따라서 요청 객체는 문자열의 형태로 바디를 저장하고 바디를 사용하는 곳에서 적절한 형태로 변환해 사용하는 것이 좋다고 생각했다.
+
+
+- JSON 형태의 요청을 모델 객체로 변환하는 기능을 어떻게 구현할까?
+    - 모델마다 JSON 요청으로 모델 객체를 생성하는 기능을 구현할 수 있지만 모델이 많아질 경우 중복 코드가 많아질 것이라 생각했다.
+    - 따라서 어노테이션과 리플렉션을 이용해 요청의 바디를 모델 객체로 변환하는 기능을 구현했다.
+    - 객체의 필드와 JSON의 키값을 매핑하기 위해 어노테이션을 사용했고 리플렉션을 이용해 모델 객체를 생성하고 필드에 값을 할당했다.
+    - 리플렉션으로 빈 모델 객체를 생성하기 위해 모든 모델에 공통적으로 인자가 없는 기본 생성자가 필요했고 이를 강제하기 위해 `Model`을 인터페이스가 아닌 추상 클래스로 구현했다.
+
+
+- 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+    - 아래와 같은 방법을 구현할 수 있을 것 같다. 
+        - `Exception`을 상속받는 예외 클래스를 구현
+        - 어플리케이션에서 클라이언트로 전달하는 모든 예외를 해당 예외 객체로 래핑
+        - `RequestHandler`과 컨트롤러 사이에 인터셉터 레이어를 추가해 예외 객체를 받아 응답 객체로 변환 
+        - `RequestHandler`에서는 예외 객체와 정상 응답을 같은 응답 객체 혹은 인터페이스로 받아 클라이언트에 전달
+  - 위 구현 방법의 문제점은 어플리케이션의 예외 객체를 처리하는 부분(인터셉터 레이어)까지 거의 모든 메서드에 `throws CustomException`을 추가해야한다는 점이다.
+  - 이 부분에 대해서는 step 6까지 완료 한 후 마지막에 고민해보려한다.
 
 ### 기타
 
 #### `java.nio`와 `java.io`
-`java.io`는 java 1.0 부터 지원되는 I/O 패키지로 전통적인 블로킹 I/O 모델을 사용한다. 
+
+`java.io`는 java 1.0 부터 지원되는 I/O 패키지로 전통적인 블로킹 I/O 모델을 사용한다.
 스트림 기반 I/O로 바이트 스트림(InputStream, OutputStream)과 문자 스트림(Reader, Writer)으로 나뉜다.
-바이트 스트림의 경우 1바이트씩 읽고 쓰기 때문에 일반적으로 느린 성능을 보인다. 
+바이트 스트림의 경우 1바이트씩 읽고 쓰기 때문에 일반적으로 느린 성능을 보인다.
 이 경우 `BufferedInputStream`, `BufferedOutputStream`을 사용해 버퍼를 통한 성능을 개선할 수 있다.
-java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한다.  
+java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한다.
 
 `java.nio`는 java 1.4 부터 지원되는 I/O 패키지로 블로킹 I/O 모델에 더해 논블로킹 I/O 모델을 지원한다.
-`java.nio`는 기본적으로 버퍼를 이용하며 채널 기반 I/O를 한다. 
-[채널](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Channel.html)은 I/O 작업을 수행할 수 있는 엔티티(파일, 소켓)에 대한 연결을 나타낸다.
+`java.nio`는 기본적으로 버퍼를 이용하며 채널 기반 I/O를 한다.
+[채널](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/Channel.html)은 I/O 작업을 수행할 수 있는 엔티티(파일, 소켓)에 대한 연결을
+나타낸다.
 채널 기반 I/O와 스트림 기반 I/O의 큰 차이점은 채널은 양방성으로 읽기와 쓰기 모두 지원한다는 점이다.
-채널 역시 기본적으로 블로킹 I/O로 동작하며 [configureBlocking(false)](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/spi/AbstractSelectableChannel.html#configureBlocking-boolean-)와 같은 설정을 통해 논블로킹 모드로 전환할 수 있다.
-이렇게 논블로킹 I/O로 동작하는 채널들은 [Selector](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/package-summary.html)에 등록 되어 관리될 수 있다.
+채널 역시 기본적으로 블로킹 I/O로
+동작하며 [configureBlocking(false)](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/spi/AbstractSelectableChannel.html#configureBlocking-boolean-)
+와 같은 설정을 통해 논블로킹 모드로 전환할 수 있다.
+이렇게 논블로킹 I/O로 동작하는 채널들은 [Selector](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/package-summary.html)에 등록
+되어 관리될 수 있다.
 `Selector`를 이용하면 단일 스레드에서 여러 채널의 I/O 작업을 효율적으로 모니터링하고 관리할 수 있다.
 
 과제에서 제작 중인 웹서버의 경우 `Thread per Request` 방식으로 동작하며 요청당 최대 하나의 정적 페이지를 마지막에 읽어온다.
 따라서 `java.nio`를 사용해 non-blocking 비동기 I/O로 구현했을 때 얻을 수 있는 이점은 크지 않다.
+
+#### HTTP Field는 case-insensitive
+
+HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
+때 case-insensitive하게 고려해야한다.  
+[RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names)
