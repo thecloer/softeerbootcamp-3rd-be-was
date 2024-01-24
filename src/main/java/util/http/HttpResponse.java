@@ -8,10 +8,10 @@ public class HttpResponse {
 
     private final HttpStatus status;
     private final ContentType contentType;
-    private final String additionalHeaders;
+    private final Map<String, String> additionalHeaders;
     private final byte[] body;
 
-    public HttpResponse(HttpStatus status, ContentType contentType, String additionalHeaders, byte[] body) {
+    private HttpResponse(HttpStatus status, ContentType contentType, Map<String, String> additionalHeaders, byte[] body) {
         this.status = status;
         this.contentType = contentType;
         this.additionalHeaders = additionalHeaders;
@@ -39,7 +39,11 @@ public class HttpResponse {
     }
 
     public String getAdditionalHeaders() {
-        return additionalHeaders;
+        StringBuilder additionalHeader = new StringBuilder();
+        for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
+            additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+        }
+        return additionalHeader.toString();
     }
 
     @Override
@@ -86,11 +90,7 @@ public class HttpResponse {
         }
 
         public HttpResponse build() {
-            StringBuilder additionalHeader = new StringBuilder();
-            for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
-                additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
-            }
-            return new HttpResponse(status, contentType, additionalHeader.toString(), body);
+            return new HttpResponse(status, contentType, additionalHeaders, body);
         }
     }
 }
