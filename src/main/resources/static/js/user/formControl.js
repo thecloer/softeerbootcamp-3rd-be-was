@@ -4,13 +4,14 @@
     const $form = document.getElementById("form");
     const $message = document.getElementById("form-message");
 
+    const PATH = $form.action;
     const redirectByPath = (path) => window.location.href = window.origin + path;
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
         const formData = new FormData($form);
 
-        const response = await fetch("/user/create", {
+        const response = await fetch(PATH, {
             method: "POST",
             body: JSON.stringify(Object.fromEntries(formData.entries())),
             headers: {
@@ -23,11 +24,12 @@
             if (redirectPath)
                 redirectByPath(redirectPath);
         }
-
-        const data = await response.json();
-        if (data.message) {
-            $message.innerText = data.message;
-            $message.classList.remove("hidden");
+        else {
+            const data = await response.json();
+            if (data.message) {
+                $message.innerText = data.message;
+                $message.classList.remove("hidden");
+            }
         }
     };
 
