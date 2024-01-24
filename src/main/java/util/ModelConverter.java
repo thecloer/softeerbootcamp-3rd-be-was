@@ -1,13 +1,18 @@
 package util;
 
 import annotation.Column;
+import exception.InternalServerErrorException;
 import model.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Map;
 
 public class ModelConverter {
+
+    private static final Logger logger = LoggerFactory.getLogger(ModelConverter.class);
 
     public static <T extends Model> T convert(String stringifiedJson, Class<T> clazz) {
         return convert(JSON.parse(stringifiedJson), clazz);
@@ -36,8 +41,8 @@ public class ModelConverter {
             return model;
         } catch (Exception e) {
             // TODO: InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException
-            e.printStackTrace();
-            throw new RuntimeException("모델 객체 생성에 실패했습니다. (" + e.getMessage() + ")");
+            logger.debug("모델 객체 생성에 실패했습니다. ({})", e.getMessage());
+            throw new InternalServerErrorException("서버에서 오류가 발생했습니다. 죄송합니다. ");
         }
     }
 }
