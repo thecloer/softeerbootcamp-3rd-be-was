@@ -9,11 +9,15 @@ import util.*;
 import util.http.ContentType;
 import util.http.HttpMessage;
 import util.http.HttpRequest;
-import util.http.HttpResponse;
 
 public class RequestHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final RequestPipeline requestPipeline = new RequestPipeline();
+
+    static {
+        // TODO: requestPipeline.use(new AuthFilter());
+    }
 
     private final Socket connection;
 
@@ -27,7 +31,7 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getUri());
 
-            HttpResponse response = Router.route(request);
+            HttpMessage response = requestPipeline.process(request);
 
             send(out, response);
         } catch (IOException e) {
