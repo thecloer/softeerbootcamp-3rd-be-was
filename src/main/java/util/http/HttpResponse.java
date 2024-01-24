@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpResponse {
+public class HttpResponse implements HttpMessage {
 
     private final HttpStatus status;
     private final ContentType contentType;
@@ -22,22 +22,27 @@ public class HttpResponse {
         return status.getCode();
     }
 
+    @Override
     public String getStatusMessage() {
         return status.getMessage();
     }
 
+    @Override
     public ContentType getContentType() {
         return contentType;
     }
 
+    @Override
     public Integer getBodyLength() {
         return body.length;
     }
 
+    @Override
     public byte[] getBody() {
         return body;
     }
 
+    @Override
     public String getAdditionalHeaders() {
         StringBuilder additionalHeader = new StringBuilder();
         for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
