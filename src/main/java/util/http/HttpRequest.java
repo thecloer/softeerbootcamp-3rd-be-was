@@ -43,7 +43,7 @@ public class HttpRequest {
     }
 
     public String getProperty(String key) {
-        return properties.getOrDefault(key, "");
+        return properties.getOrDefault(key.toLowerCase(), "");
     }
 
     public String getPath() {
@@ -86,7 +86,7 @@ public class HttpRequest {
         }
 
         public Builder setProperty(String key, String value) {
-            this.properties.put(key, value);
+            this.properties.put(key.toLowerCase(), value);
             return this;
         }
 
