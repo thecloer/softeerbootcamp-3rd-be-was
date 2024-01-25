@@ -1,5 +1,6 @@
 package util.http;
 
+import session.Session;
 import util.UriHelper;
 
 import java.util.*;
@@ -13,6 +14,7 @@ public class HttpRequest {
     private final String body;
     private final Map<String, String> queries;
     private final Map<String, String> properties;
+    private Session session;
 
     private HttpRequest(String method, String uri, String protocol, String body, Map<String, String> properties) {
         this.method = method;
@@ -43,7 +45,7 @@ public class HttpRequest {
     }
 
     public String getProperty(String key) {
-        return properties.getOrDefault(key.toLowerCase(), "");
+        return properties.get(key.toLowerCase());
     }
 
     public String getPath() {
@@ -56,6 +58,14 @@ public class HttpRequest {
 
     public String getQueryParam(String key) {
         return queries.getOrDefault(key, "");
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 
     public static class Builder {
