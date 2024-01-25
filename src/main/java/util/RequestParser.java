@@ -1,5 +1,6 @@
 package util;
 
+import util.http.HttpMethod;
 import util.http.HttpRequest;
 
 import java.io.BufferedReader;
@@ -13,7 +14,7 @@ import java.util.StringTokenizer;
 
 public class RequestParser {
 
-    private static final Set<String> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of("POST", "PUT", "PATCH"));
+    private static final Set<HttpMethod> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH));
 
     public static HttpRequest parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -35,7 +36,7 @@ public class RequestParser {
         if (st.countTokens() != 3)
             throw new IllegalArgumentException("Invalid Request Line");
 
-        builder.method(st.nextToken())
+        builder.method(HttpMethod.valueOf(st.nextToken()))
                 .uri(st.nextToken())
                 .protocol(st.nextToken());
     }

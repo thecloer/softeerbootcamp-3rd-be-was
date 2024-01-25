@@ -3,10 +3,7 @@ package controller;
 import exception.RedirectException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.http.ContentType;
-import util.http.HttpRequest;
-import util.http.HttpResponse;
-import util.http.HttpStatus;
+import util.http.*;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,8 +30,8 @@ public class ResourceController {
                 .build();
     }
 
-    private String redirectRoot(String method, String path) {
-        if ("GET".equals(method) && path.equals("/")) {
+    private String redirectRoot(HttpMethod method, String path) {
+        if (method == HttpMethod.GET && path.equals("/")) {
             return "/index.html";
         }
         return path;
