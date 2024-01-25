@@ -14,14 +14,14 @@ import java.util.HashMap;
 
 public class Router {
 
-    private static final UserController userController = BeanContainer.getUserController();
-    private static final ResourceController resourceController = BeanContainer.getResourceController();
+    private static final UserController userController = ApplicationContainer.getUserController();
+    private static final ResourceController resourceController = ApplicationContainer.getResourceController();
 
     private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTE_MAP;
 
     static {
         Map<String, Function<HttpRequest, HttpResponse>> routeMap = new HashMap<>();
-        routeMap.put("GET /user/create", userController::signUp);
+        routeMap.put("POST /user/create", userController::signUp);
 
         ROUTE_MAP = Collections.unmodifiableMap(routeMap);
     }

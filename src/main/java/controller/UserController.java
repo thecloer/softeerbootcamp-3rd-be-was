@@ -1,8 +1,8 @@
 package controller;
 
 import db.Database;
-import model.User;
-import util.*;
+import model.User.User;
+import model.User.UserBuilder;
 import util.http.ContentType;
 import util.http.HttpRequest;
 import util.http.HttpResponse;
@@ -18,35 +18,25 @@ public class UserController {
 
     public HttpResponse signUp(HttpRequest request) {
         try {
-            String userId = request.getQueryParam(User.USER_ID);
-            String password = request.getQueryParam(User.PASSWORD);
-            String name = request.getQueryParam(User.NAME);
-            String email = request.getQueryParam(User.EMAIL);
+            User user = UserBuilder.fromStringifiedJson(request.getBody());
 
-            if (userId == null || userId.isEmpty())
+            if (user.getUserId().isEmpty())
                 throw new IllegalArgumentException("userId가 입력되지 않았습니다.");
-            if (password == null || password.isEmpty())
+            if (user.getPassword().isEmpty())
                 throw new IllegalArgumentException("password가 입력되지 않았습니다.");
-            if (name == null || name.isEmpty())
+            if (user.getName().isEmpty())
                 throw new IllegalArgumentException("name이 입력되지 않았습니다.");
-            if (email == null || email.isEmpty())
+            if (user.getEmail().isEmpty())
                 throw new IllegalArgumentException("email이 입력되지 않았습니다.");
 
-            if (database.findUserById(userId) != null)
+            if (database.findUserById(user.getUserId()) != null)
                 throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
-
-            User user = new User.Builder()
-                    .userId(userId)
-                    .password(password)
-                    .name(name)
-                    .email(email)
-                    .build();
 
             database.addUser(user);
 
             return new HttpResponse.Builder()
                     .status(HttpStatus.CREATED)
-                    .addHeader("Location", "/user/profile.html?userId=" + UriHelper.encode(user.getUserId()))
+                    .setHeader("Location", "/")
                     .build();
 
         } catch (IllegalArgumentException e) {

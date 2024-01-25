@@ -7,9 +7,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 public class RequestParser {
+
+    private static final Set<String> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of("POST", "PUT", "PATCH"));
 
     public static HttpRequest parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -19,6 +23,8 @@ public class RequestParser {
 
         parseRequestHeaderLine(requestBuilder, line);
         parseRequestHeaderFields(requestBuilder, br);
+        if (METHODS_WITH_BODY.contains(requestBuilder.getMethod()))
+            parseRequestBody(requestBuilder, br);
 
         return requestBuilder.build();
     }
@@ -34,14 +40,27 @@ public class RequestParser {
                 .protocol(st.nextToken());
     }
 
-    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws
-            IOException {
-        for (String line = requestHeader.readLine(); !(line == null
-                || line.isEmpty()); line = requestHeader.readLine()) {
-
+    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
+        for (String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
             String[] tokens = line.split(": ");
-            if (tokens.length == 2)
-                builder.setProperty(tokens[0], tokens[1]);
+            if (tokens.length == 2) builder.setProperty(tokens[0].toLowerCase(), tokens[1]);
+        }
+    }
+
+    private static void parseRequestBody(HttpRequest.Builder builder, BufferedReader br) throws IOException {
+        try {
+            String contentLengthValue = builder.getProperty("content-length");
+            int contentLength = Integer.parseInt(contentLengthValue.trim()); // TODO: contentLength > Integer.MAX_VALUE 일 경우 예외처리
+            char[] buffer = new char[contentLength]; // TODO: buffer size 작게 하고 while 문으로 읽기
+            int bytesRead = br.read(buffer, 0, contentLength);
+            if (bytesRead != contentLength) {
+                throw new IOException("Content-Length와 실제 Body의 길이가 다릅니다.");
+            }
+
+            builder.body(new String(buffer));
+
+        } catch (NumberFormatException e) {
+            throw new IOException("Content-Length의 형식이 잘못됐습니다.");
         }
     }
 }

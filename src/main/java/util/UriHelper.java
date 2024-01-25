@@ -1,16 +1,10 @@
 package util;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 public class UriHelper {
-
-    public static String encode(String path) {
-        return URLEncoder.encode(path, StandardCharsets.UTF_8);
-    }
 
     public static String extractExtension(String path) {
         int index = path.lastIndexOf(".");
@@ -27,8 +21,11 @@ public class UriHelper {
         String[] params = queryString.split("&");
         for (String param : params) {
             StringTokenizer st = new StringTokenizer(param, "=");
-            if (st.countTokens() == 2)
-                queries.put(st.nextToken(), st.nextToken());
+            if (st.countTokens() != 2)
+                continue;
+            String key = st.nextToken();
+            String value = st.nextToken();
+            queries.put(key.toLowerCase(), value);
         }
 
         return queries;
