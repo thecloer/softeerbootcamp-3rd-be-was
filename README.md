@@ -9,6 +9,16 @@
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was
 를 참고하여 작성되었습니다.
 
+## WAS 구조
+
+![WAS 구조](./docs/was-architecture.png)
+
+`WebServer`: 웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당  
+`RequestHandler`: 클라이언트의 요청으로 부터 `Request` 객체를 생성하고 최종 응답을 클라이언트에게 전송  
+`RequestPipeline`: 요청이에서 부터 응답까지의 파이프라인, 요청은 등록된 미들웨어들을 거쳐 컨트롤러까지 도달    
+`Router`: 요청과 컨트롤러의 핸들러 매핑  
+`Controller`: 요청에 대한 메인 로직을 실행하는 부분
+
 ## 프로젝트 진행 과정 기록
 
 - [1단계 - index.html 응답](#1단계---indexhtml-응답)
