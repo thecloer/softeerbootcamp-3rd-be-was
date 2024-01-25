@@ -30,7 +30,7 @@ public class Session {
         lastAccessedTime = System.currentTimeMillis();
     }
 
-    public Boolean isExpired(Long ttl) {
-        return System.currentTimeMillis() - lastAccessedTime > ttl;
+    public Boolean isExpired() {
+        return System.currentTimeMillis() - lastAccessedTime > SessionManager.TTL;
     }
 }
