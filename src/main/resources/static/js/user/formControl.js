@@ -5,7 +5,28 @@
     const $message = document.getElementById("form-message");
 
     const PATH = $form.action;
-    const redirectByPath = (path) => window.location.href = window.origin + path;
+
+    const responseHandler = async (response) => {
+        if (!response.ok) {
+            const data = await response.json();
+            if (data.message) {
+                $message.innerText = data.message;
+                $message.classList.remove("hidden");
+            }
+            return;
+        }
+
+        if (response.redirected) {
+            window.location.href = response.url;
+            return;
+        }
+
+        const redirectPath = response.headers.get("Location");
+        if (redirectPath) {
+            window.location.href = window.location.origin + redirectPath;
+            return;
+        }
+    };
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
@@ -19,18 +40,7 @@
             }
         });
 
-        if (response.ok) {
-            const redirectPath = response.headers.get("Location");
-            if (redirectPath)
-                redirectByPath(redirectPath);
-        }
-        else {
-            const data = await response.json();
-            if (data.message) {
-                $message.innerText = data.message;
-                $message.classList.remove("hidden");
-            }
-        }
+        responseHandler(response);
     };
 
     const hideMessage = () => {
