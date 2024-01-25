@@ -3,6 +3,7 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import middleware.AuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.*;
@@ -16,7 +17,7 @@ public class RequestHandler implements Runnable {
     private static final RequestPipeline requestPipeline = new RequestPipeline();
 
     static {
-        // TODO: requestPipeline.use(new AuthFilter());
+        requestPipeline.use(new AuthFilter());
     }
 
     private final Socket connection;
