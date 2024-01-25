@@ -13,11 +13,16 @@
 
 ![WAS 구조](./docs/was-architecture.png)
 
-- [WebServer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/WebServer.java): 웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당  
-- [RequestHandler](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequestHandler.java): 클라이언트의 요청으로 부터 `Request` 객체를 생성하고 최종 응답을 클라이언트에게 전송  
-- [RequestPipeline](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequesetPipline.java): 요청이에서 부터 응답까지의 파이프라인, 요청은 등록된 미들웨어들을 거쳐 컨트롤러까지 도달    
-- [Router](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/Router.java): 요청과 컨트롤러의 핸들러를 매핑  
-- [Controller](https://github.com/thecloer/softeerbootcamp-3rd-be-was/tree/thecloer/src/main/java/controller): 요청에 대한 메인 로직을 실행하는 부분
+- [WebServer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/WebServer.java):
+  웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당
+- [RequestHandler](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequestHandler.java):
+  클라이언트의 요청으로 부터 `Request` 객체를 생성하고 최종 응답을 클라이언트에게 전송
+- [RequestPipeline](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequesetPipline.java):
+  요청이에서 부터 응답까지의 파이프라인, 요청은 등록된 미들웨어들을 거쳐 컨트롤러까지 도달
+- [Router](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/Router.java):
+  요청과 컨트롤러의 핸들러를 매핑
+- [Controller](https://github.com/thecloer/softeerbootcamp-3rd-be-was/tree/thecloer/src/main/java/controller): 요청에 대한 메인
+  로직을 실행하는 부분
 
 ## 프로젝트 진행 과정 기록
 
@@ -355,19 +360,49 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 ### 기능 요구사항
 
-- [ ] 가입한 회원 정보로 로그인을 할 수 있다.
-- [ ] [로그인] 메뉴를 클릭하면 /user/login.html 으로 이동해 로그인할 수 있다.
-- [ ] 로그인이 성공하면 index.html로 이동한다.
-- [ ] 로그인이 실패하면 /user/login_failed.html로 이동한다.
+- ✅ 가입한 회원 정보로 로그인을 할 수 있다.
+- ✅ [로그인] 메뉴를 클릭하면 /user/login.html 으로 이동해 로그인할 수 있다.
+- ✅ 로그인이 성공하면 /index.html로 이동한다.
+- ✅ 로그인이 실패하면 /user/login_failed.html로 이동한다.
 
 ### 프로그래밍 요구사항
 
-- [ ] 로그인이 성공할 경우 HTTP 헤더의 쿠키 값을 SID=세션 ID 로 응답한다.
-- [ ] 세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
-- [ ] 서버는 세션 아이디에 해당하는 User 정보에 접근할 수 있어야 한다.
+- ✅ 로그인이 성공할 경우 HTTP 헤더의 쿠키 값을 SID=세션 ID 로 응답한다.
+- ✅ 세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
+- ✅ 서버는 세션 아이디에 해당하는 User 정보에 접근할 수 있어야 한다.
 
 ### 구현 내용
 
+- 세션, 쿠키를 이용한 로그인 구현
+    - 가입한 회원 정보로 로그인
+        - 로그인 성공 시 세션을 생성하고 세션 쿠키 발급
+        - 로그인 실패 시 실패 이유 화면에 표시
+    - 쿠키에 저장된 세션 ID를 이용해 로그인 여부 확인
+        - `AuthFilter`를 통한 로그인 여부에 따라 특정 페이지 접근 제어
+            - 로그인 된 경우 로그인 페이지, 회원가입 페이지 접근 불가
+            - 로그인 되지 않은 경우 개인정보 페이지 접근 불가
+
+
+- 요청 파이프라인을 만들어 미들웨어 적용
+    - 요청 파이프라인은 요청에서 응답이 생성되는 과정의 실행 순서를 관리
+    - 요청 -> [ 미들웨어1 -> 미들웨어2 -> ... -> 라우터 -> 컨트롤러 ] -> 응답
+    - 등록된 미들웨어는 등록한 순서대로 실행
+    - 확장성을 위해 여러개의 미들웨어를 등록할 수 있도록 구현
+    - 필요하다면 컨트롤러에서 생성된 응답을 처리하는 미들웨어도 구현 가능
+
+
+- [step-4의 고민 사항](#고민-사항-3): 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+    - `HttpBaseException`을 통해 요청 파이프라인 내부에서 발행한 예외는 `RequestPipeline`에서 받아 바로 응답
+
 ### 고민 사항
 
-### 기타
+#### 유연하고 확장성있는 프레임워크
+
+쿠키-세션을 이용한 로그인을 구현하며 확장성있는 구조에 대한 고민을 많이했다.  
+모든 요청에 적용해야하는 로직을 추가할 때 마다 클래스로 레이어를 만들어 기존 레이어 사이에 추가한다면 구조를 파악하기 힘들고 레이어의 순서를 하나하나 따라가며 확인해 봐야할 것이다.  
+`express.js`의 미들웨어에서 영감을 받아 요청 파이프라인을 만들어 미들웨어를 적용할 수 있도록 구현했다. 파이프라인을 통해 요청에서 응답이 생성되는 과정의 실행 순서를 관리할 수 있고 예외처리에 대한 개발
+편의성을 제공한다.  
+`RequestPipeline`은 하나의 거대한 인터셉터로 볼 수 있다.
+
+서비스의 규모가 커지고 기능이 추가되어도 컨트롤러의 핸들러를 작성하고 라우터에 등록하는 것으로 쉽게 확장할 수 있다. 지금은 라우터에 직접 핸들러를 등록하지만 어노테이션과 리플렉션을 이용해 라우터에 핸들러를 등록하는
+기능을 구현할 수 있다.
