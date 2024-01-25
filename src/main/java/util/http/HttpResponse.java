@@ -1,8 +1,7 @@
 package util.http;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class HttpResponse implements HttpMessage {
 
@@ -10,16 +9,14 @@ public class HttpResponse implements HttpMessage {
     private final ContentType contentType;
     private final Map<String, String> additionalHeaders;
     private final byte[] body;
+    private final List<String> cookies;
 
-    private HttpResponse(HttpStatus status, ContentType contentType, Map<String, String> additionalHeaders, byte[] body) {
+    private HttpResponse(HttpStatus status, ContentType contentType, Map<String, String> additionalHeaders, byte[] body, List<String> cookies) {
         this.status = status;
         this.contentType = contentType;
         this.additionalHeaders = additionalHeaders;
         this.body = body;
-    }
-
-    public void setHeader(String key, String value) {
-        additionalHeaders.put(key, value);
+        this.cookies = cookies;
     }
 
     @Override
@@ -57,6 +54,15 @@ public class HttpResponse implements HttpMessage {
     }
 
     @Override
+    public String getCookies() {
+        StringBuilder cookieBuilder = new StringBuilder();
+        for (String cookie : cookies) {
+            cookieBuilder.append("Set-Cookie: ").append(cookie).append("\r\n");
+        }
+        return cookieBuilder.toString();
+    }
+
+    @Override
     public String toString() {
         return new StringBuilder()
                 .append("HttpResponse ")
@@ -68,8 +74,17 @@ public class HttpResponse implements HttpMessage {
                 .toString();
     }
 
+    public void setHeader(String key, String value) {
+        additionalHeaders.put(key, value);
+    }
+
+    public void addCookie(String cookie) {
+        cookies.add(cookie);
+    }
+
     public static class Builder {
         private final Map<String, String> additionalHeaders = new HashMap<>();
+        private final List<String> cookies = new ArrayList<>();
         private HttpStatus status;
         private ContentType contentType = ContentType.NONE;
         private byte[] body = new byte[0];
@@ -84,11 +99,6 @@ public class HttpResponse implements HttpMessage {
             return this;
         }
 
-        public Builder setHeader(String key, String value) {
-            additionalHeaders.put(key, value);
-            return this;
-        }
-
         public Builder body(byte[] body) {
             this.body = body;
             return this;
@@ -99,8 +109,18 @@ public class HttpResponse implements HttpMessage {
             return this;
         }
 
+        public Builder setHeader(String key, String value) {
+            additionalHeaders.put(key, value);
+            return this;
+        }
+
+        public Builder addCookie(String cookie) {
+            cookies.add(cookie);
+            return this;
+        }
+
         public HttpResponse build() {
-            return new HttpResponse(status, contentType, additionalHeaders, body);
+            return new HttpResponse(status, contentType, additionalHeaders, body, cookies);
         }
     }
 }

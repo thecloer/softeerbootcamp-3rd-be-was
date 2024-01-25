@@ -7,4 +7,5 @@ public interface HttpMessage {
     String getAdditionalHeaders();
     Integer getBodyLength();
     byte[] getBody();
+    String getCookies();
 }

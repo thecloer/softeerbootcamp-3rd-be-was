@@ -47,6 +47,7 @@ public class RequestHandler implements Runnable {
             dos.writeBytes("Content-Type: " + response.getContentType() + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
         dos.writeBytes(response.getAdditionalHeaders());
+        dos.writeBytes(response.getCookies());
         dos.writeBytes("\r\n");
 
         if (response.getBodyLength() > 0)

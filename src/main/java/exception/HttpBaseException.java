@@ -58,8 +58,18 @@ public class HttpBaseException extends RuntimeException implements HttpMessage {
         return response.getBody();
     }
 
+    @Override
+    public String getCookies() {
+        return response.getCookies();
+    }
+
     public HttpBaseException setHeader(String key, String value) {
         response.setHeader(key, value);
+        return this;
+    }
+
+    public HttpBaseException setCookie(String cookie) {
+        response.addCookie(cookie);
         return this;
     }
 }
