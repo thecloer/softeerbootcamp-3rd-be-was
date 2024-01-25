@@ -28,8 +28,12 @@ public class Router {
     }
 
     public static HttpResponse route(HttpRequest httpRequest) {
-        String routeKey = httpRequest.getMethod() + " " + httpRequest.getPath();
+        String routeKey = getRouteKey(httpRequest);
         Function<HttpRequest, HttpResponse> handler = ROUTE_MAP.getOrDefault(routeKey, resourceController::resourceHandler);
         return handler.apply(httpRequest);
+    }
+
+    public static String getRouteKey(HttpRequest httpRequest) {
+        return httpRequest.getMethod() + " " + httpRequest.getPath();
     }
 }
