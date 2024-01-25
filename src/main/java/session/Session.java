@@ -11,7 +11,7 @@ public class Session {
 
     public Session(String sessionId) {
         this.sessionId = sessionId;
-        setLastAccessedTime();
+        renew();
     }
 
     public String getSessionId() {
@@ -26,7 +26,7 @@ public class Session {
         return attributes.getOrDefault(key, null); // TODO: default 값 생각
     }
 
-    public void setLastAccessedTime() {
+    public void renew() {
         lastAccessedTime = System.currentTimeMillis();
     }
 
