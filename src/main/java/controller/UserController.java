@@ -4,6 +4,8 @@ import db.Database;
 import exception.BadRequestException;
 import model.User.User;
 import model.User.UserBuilder;
+import session.Session;
+import session.SessionManager;
 import util.http.*;
 
 public class UserController {
@@ -52,11 +54,14 @@ public class UserController {
         if (!foundUser.getPassword().equals(user.getPassword())) // TODO: PW 일급객체 만들어 PW관련 로직 넣기
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
 
-        // TODO: 쿠키, 세션으로 로그인 유지
+        Session session = SessionManager.createSession();
+        session.setAttribute("userId", user.getUserId());
+        String cookie = SessionManager.toCookieString(session);
 
         return new HttpResponse.Builder()
-                .status(HttpStatus.OK)
-                .setHeader("Location", "/")
+                .status(HttpStatus.FOUND)
+                .setHeader("Location", "/") // TODO: redirect("/");
+                .addCookie(cookie)
                 .build();
     }
 }
