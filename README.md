@@ -59,11 +59,15 @@
 ### 구현 내용
 
 - Http request 로깅
-    - "[ {protocol} {method} ] {path?query#fragment}"
+    - `[ {protocol} {method} ] {path?query#fragment}`
+
+
 - 정적 파일 응답
     - 요청 리소스의 확장자에 따라 응답 헤더의 `Content-Type`설정, 리소스 경로 분기 응답
     - `.html` -> `resources/templates`
     - 이외 -> `resources/static`
+
+
 - `Concurrent` 패키지가 제공하는 스레드 풀을 이용해 요청 처리
     - 기존 `Thread` 클래스로 요청마다 스레드를 생성, 제거 하며 요청을 처리하는 방식에서 요청을 큐에 넣고 스레드 풀에서 사용 가능한 스레드가 요청을 꺼내 처리하는 방식으로 변경
 
@@ -114,12 +118,18 @@
 
 ### 구현 내용
 
-- "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
+- "회원가입" 메뉴를 클릭하면 `/user/form.html` 으로 이동, 회원가입 폼을 표시
+
+
 - 폼을 통한 회원가입
     - 회원가입 성공시 `/user/profile.html?userId={userId}`로 리다이렉트
     - 회원가입 실패시 `/user/form.html?message={errorMessage}`로 리다이렉트
         - step 3 완료 이후 프론트에서 메세지 표시 구현할 예정
+
+
 - 잘못된 경로 접근 시 404 페이지 리다이렉트
+
+
 - `Junit`을 활용한 단위 테스트 적용
     - `UserControllerTest`: 회원가입 요청을 받고 응답하는 테스트
     - `UserServiceTest`: DB에 회원 저장, 입력 형식 예외 테스트
@@ -187,6 +197,8 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 - 다양한 컨텐츠 타입을 지원
     - step 3를 보지못하고 step 1 정적 파일 응답에서 이미 구현
     - html, css, js, ico, png, svg, txt, eot, ttf, woff, woff2 지원
+
+
 - step 2에서 구현했던 회원가입 실패 시 클라이언트로 내려준 메세지 프론트에서 표시
     - 회원가입 실패 시 메세지 JSON 형태로 응답
         - 프론트에서 JSON 형태로 응답을 받아 메세지 표시
@@ -194,7 +206,11 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - `Location: /user/profile.html?userId={userId}`
         - 프론트에서 응답받은 URI로 회원 정보 요청
         - [참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
+
+
 - 유틸 클래스 테스트 코드 추가
+
+
 - 리팩터링
     - 디미터의 법칙
         - [commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c)
