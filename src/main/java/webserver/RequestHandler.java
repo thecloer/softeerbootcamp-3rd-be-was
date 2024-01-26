@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
-import middleware.AuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.*;
@@ -14,11 +13,7 @@ import util.http.HttpRequest;
 public class RequestHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final RequestPipeline requestPipeline = new RequestPipeline();
-
-    static {
-        requestPipeline.use(new AuthFilter());
-    }
+    private static final RequestPipeline requestPipeline = ApplicationContainer.getRequestPipeline();
 
     private final Socket connection;
 
