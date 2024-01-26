@@ -12,11 +12,6 @@ public class RequestPipeline {
 
     private final List<Middleware> middlewares = new ArrayList<>();
 
-    public RequestPipeline use(Middleware middleware) {
-        this.middlewares.add(middleware);
-        return this;
-    }
-
     public HttpMessage process(HttpRequest request) {
         try {
             request = processMiddlewares(request);
@@ -31,5 +26,10 @@ public class RequestPipeline {
             request = middleware.process(request);
 
         return request;
+    }
+
+    public RequestPipeline use(Middleware middleware) {
+        this.middlewares.add(middleware);
+        return this;
     }
 }
