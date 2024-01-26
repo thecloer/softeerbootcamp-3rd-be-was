@@ -347,8 +347,22 @@ java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한�
 #### HTTP Field는 case-insensitive
 
 HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
-때 case-insensitive하게 고려해야한다.  
-[RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names)
+때 case-insensitive하게 고려해야한다.
+
+> Field names are case-insensitive and ought to be registered within the "Hypertext Transfer Protocol (HTTP) Field Name
+> Registry"
+
+[RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.1-3)
+
+#### HTTP Field를 파싱 할 때 leading or trailing whitespace를 고려해야 한다.
+
+필드 값은 선행 공백이나 후행 공백을 포함하지 않는다. 하지만 특정 버전의 HTTP에서 메시지에 이러한 공백을 허용하는 경우도 있기에 필드 파싱을 구현할 때는 이러한 공백을 제외해한다.
+
+> A field value does not include leading or trailing whitespace. When a specific version of HTTP allows such whitespace
+> to appear in a message, a field parsing implementation MUST exclude such whitespace prior to evaluating the field
+> value.
+
+[RFC HTTP Semantics (Field values)](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.5-3)
 
 ## 5단계 - 쿠키를 이용한 로그인
 
