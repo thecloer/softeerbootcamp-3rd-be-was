@@ -17,19 +17,19 @@ public class Router {
     private static final UserController userController = ApplicationContainer.getUserController();
     private static final ResourceController resourceController = ApplicationContainer.getResourceController();
 
-    private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTE_MAP;
+    private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTING_TABLE;
 
     static {
         Map<String, Function<HttpRequest, HttpResponse>> routeMap = new HashMap<>();
         routeMap.put("POST /user/create", userController::signUp);
         routeMap.put("POST /user/login", userController::login);
 
-        ROUTE_MAP = Collections.unmodifiableMap(routeMap);
+        ROUTING_TABLE = Collections.unmodifiableMap(routeMap);
     }
 
     public static HttpResponse route(HttpRequest httpRequest) {
         String routeKey = getRouteKey(httpRequest);
-        Function<HttpRequest, HttpResponse> handler = ROUTE_MAP.getOrDefault(routeKey, resourceController::resourceHandler);
+        Function<HttpRequest, HttpResponse> handler = ROUTING_TABLE.getOrDefault(routeKey, resourceController::resourceHandler);
         return handler.apply(httpRequest);
     }
 
