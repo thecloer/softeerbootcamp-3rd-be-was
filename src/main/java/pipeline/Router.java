@@ -1,4 +1,4 @@
-package webserver;
+package pipeline;
 
 import controller.ResourceController;
 import controller.UserController;
@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import util.http.HttpRequest;
 import util.http.HttpResponse;
+import webserver.ApplicationContainer;
 
 import java.util.Collections;
 import java.util.HashMap;

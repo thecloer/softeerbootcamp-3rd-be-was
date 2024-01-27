@@ -3,7 +3,8 @@ package webserver;
 import db.Database;
 import controller.ResourceController;
 import controller.UserController;
-import middleware.AuthFilter;
+import pipeline.requestProcessor.AuthFilter;
+import pipeline.RequestPipeline;
 
 public class ApplicationContainer {
 
@@ -15,7 +16,7 @@ public class ApplicationContainer {
     private static final RequestPipeline requestPipeline = new RequestPipeline();
 
     static {
-        requestPipeline.use(new AuthFilter());
+        requestPipeline.addRequestProcessor(new AuthFilter());
     }
 
     public static ResourceController getResourceController() {
