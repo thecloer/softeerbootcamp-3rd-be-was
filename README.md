@@ -444,4 +444,49 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 ### 고민 사항
 
+#### 스레드 풀의 사이즈
+
+기존 스레드 풀의 사이즈는 JVM이 사용할 수 있는 프로세서의 수 + 1개로 설정했다.
+
+```java
+int ThreadPoolSize = Runtime.getRuntime().availableProcessors() + 1;
+ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolSize);
+```
+
+(CPU 코어 + 1)개로 스레드 풀 사이즈를 설정 것은 CPU 사용을 최대화하기 위함이었다. 하지만 위 설정의 문제점은 작업의 특성을 고려하지 않았다는 점이다.  
+(추가로 `Runtime.getRuntime().availableProcessors()`는 JVM이 사용할 수 있는 프로세서의 수를 반환하며 런타임에 변경될 수 있으므로 프로세서 수에 민감한 애플리케이션의 경우
+필요에 따라 폴링하여 사용해야한다.)
+
+(CPU 코어 + 1)개의 스레드 풀 사이즈는 CPU 바운드 작업을 주로 수행하며 I/O 작업의 비중이 낮은 경우에 적합하다. I/O 바운드 작업이 주를 이루고 있는 현재 웹서버의 경우 (CPU 코어 + 1)개의
+스레드 풀 사이즈는 굉장히 작은 숫자라 생각된다.  
+적절한 스레드 풀 사이즈는 스레드가 수행하는 작업과 서버가 실행되는 환경에 따라 달라 직접 테스트 해보지 않고 적절한 사이즈를 정하기는 어려웠다. Apache Tomcat과 관련 논문을 참고하여 스레드 풀 사이즈를
+최소 (3 * CPU 코어), 최대 (20 * CPU 코어)로 설정했다.
+(8코어 기준 최소 24개, 최대 160개)
+
+```java
+int processorCount = Runtime.getRuntime().availableProcessors();
+ExecutorService executorService = new ThreadPoolExecutor(
+        processorCount * 3,
+        processorCount * 20,
+        60L,
+        TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>()
+);
+```
+
+[Apache Tomcat 11 Configuration Reference](https://tomcat.apache.org/tomcat-11.0-doc/config/executor.html)
+> maxThreads: default is 200  
+> minSpareThreads: default is 25
+
+[Ling Y., Mullen T., & Lin X. (2000). *Analysis of Optimal Thread Pool
+Size*. Telcordia Technologies. Department of Electrical Engineering, Hong Kong University.](https://dl.acm.org/doi/pdf/10.1145/346152.346320)
+> Currently, thread pool size is set via a combination of heuristics and practical experience.
+> A heuristic is used to set the initial pool size, and then operators are advised to monitor the
+> system load and to modify the pool size if there are performance bottlenecks [Ca197]. One such
+> rule of thumb is that the size of thread pool should be <u>two times of the number of CPUs on the
+> host machine</u> [Ric96]. Another rule, used by <u>Microsoft's IIS, initially allocates 10 threads in the
+> thread pool per CPU</u>, and allows the size of the thread pool to grow based on the number of
+> client requests. <u>The thread pool's maximum size is heuristically set to be two times of the
+> number of megabytes of RAM in the host</u> [Ric96].
+
 ### 기타
