@@ -1,45 +1,65 @@
 package util.http;
 
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class HttpResponse {
+public class HttpResponse implements HttpMessage {
 
     private final HttpStatus status;
     private final ContentType contentType;
-    private final String additionalHeaders;
+    private final Map<String, String> additionalHeaders;
     private final byte[] body;
+    private final List<String> cookies;
 
-    public HttpResponse(HttpStatus status, ContentType contentType, String additionalHeaders, byte[] body) {
+    private HttpResponse(HttpStatus status, ContentType contentType, Map<String, String> additionalHeaders, byte[] body, List<String> cookies) {
         this.status = status;
         this.contentType = contentType;
         this.additionalHeaders = additionalHeaders;
         this.body = body;
+        this.cookies = cookies;
     }
 
+    @Override
     public Integer getStatusCode() {
         return status.getCode();
     }
 
+    @Override
     public String getStatusMessage() {
         return status.getMessage();
     }
 
+    @Override
     public ContentType getContentType() {
         return contentType;
     }
 
+    @Override
     public Integer getBodyLength() {
         return body.length;
     }
 
+    @Override
     public byte[] getBody() {
         return body;
     }
 
+    @Override
     public String getAdditionalHeaders() {
-        return additionalHeaders;
+        StringBuilder additionalHeader = new StringBuilder();
+        for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
+            additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+        }
+        return additionalHeader.toString();
+    }
+
+    @Override
+    public String getCookies() {
+        StringBuilder cookieBuilder = new StringBuilder();
+        for (String cookie : cookies) {
+            cookieBuilder.append("Set-Cookie: ").append(cookie).append("\r\n");
+        }
+        return cookieBuilder.toString();
     }
 
     @Override
@@ -54,8 +74,17 @@ public class HttpResponse {
                 .toString();
     }
 
+    public void setHeader(String key, String value) {
+        additionalHeaders.put(key, value);
+    }
+
+    public void addCookie(String cookie) {
+        cookies.add(cookie);
+    }
+
     public static class Builder {
         private final Map<String, String> additionalHeaders = new HashMap<>();
+        private final List<String> cookies = new ArrayList<>();
         private HttpStatus status;
         private ContentType contentType = ContentType.NONE;
         private byte[] body = new byte[0];
@@ -70,11 +99,6 @@ public class HttpResponse {
             return this;
         }
 
-        public Builder setHeader(String key, String value) {
-            additionalHeaders.put(key, value);
-            return this;
-        }
-
         public Builder body(byte[] body) {
             this.body = body;
             return this;
@@ -85,12 +109,18 @@ public class HttpResponse {
             return this;
         }
 
+        public Builder setHeader(String key, String value) {
+            additionalHeaders.put(key, value);
+            return this;
+        }
+
+        public Builder addCookie(String cookie) {
+            cookies.add(cookie);
+            return this;
+        }
+
         public HttpResponse build() {
-            StringBuilder additionalHeader = new StringBuilder();
-            for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
-                additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
-            }
-            return new HttpResponse(status, contentType, additionalHeader.toString(), body);
+            return new HttpResponse(status, contentType, additionalHeaders, body, cookies);
         }
     }
 }

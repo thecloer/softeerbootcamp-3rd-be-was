@@ -43,7 +43,7 @@ public class RequestParser {
     private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
         for (String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
             String[] tokens = line.split(": ");
-            if (tokens.length == 2) builder.setProperty(tokens[0].toLowerCase(), tokens[1]);
+            if (tokens.length == 2) builder.setProperty(tokens[0], tokens[1]);
         }
     }
 

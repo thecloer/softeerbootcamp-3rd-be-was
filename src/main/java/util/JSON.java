@@ -1,5 +1,7 @@
 package util;
 
+import exception.BadRequestException;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,22 +12,22 @@ public class JSON {
         Map<String, String> keyValueMap = new HashMap<>();
 
         stringifiedJson = stringifiedJson.trim();
-        if (!isObjectType(stringifiedJson)) {
-            throw new IllegalArgumentException("JSON 형식이 아닙니다. (괄호가 없습니다.)"); // TODO: 예외 응답 객체로 변경
-        }
+        if (!isObjectType(stringifiedJson))
+            throw new BadRequestException("JSON 형식이 아닙니다. (괄호가 없습니다.)");
+
         stringifiedJson = peel(stringifiedJson);
 
         String[] keyValuePairs = stringifiedJson.split(",");
         for (String keyValuePair : keyValuePairs) {
             String[] keyValue = keyValuePair.split(":");
-            if (keyValue.length != 2) {
-                throw new IllegalArgumentException("JSON 형식이 아닙니다. (key:value 쌍이 아닙니다.)"); // TODO: 예외 응답 객체로 변경
-            }
+            if (keyValue.length != 2)
+                throw new BadRequestException("JSON 형식이 아닙니다. (key:value 쌍이 아닙니다.)");
+
 
             String key = keyValue[0].trim();
-            if (!isKeyType(key)) {
-                throw new IllegalArgumentException("JSON 형식이 아닙니다. (key 형식이 잘못됐습니다.)"); // TODO: 예외 응답 객체로 변경
-            }
+            if (!isKeyType(key))
+                throw new BadRequestException("JSON 형식이 아닙니다. (key 형식이 잘못됐습니다.)");
+
             key = peel(key);
 
             String value = keyValue[1].trim();

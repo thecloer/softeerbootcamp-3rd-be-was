@@ -3,16 +3,22 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
+import middleware.AuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import util.*;
 import util.http.ContentType;
+import util.http.HttpMessage;
 import util.http.HttpRequest;
-import util.http.HttpResponse;
 
 public class RequestHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final RequestPipeline requestPipeline = new RequestPipeline();
+
+    static {
+        requestPipeline.use(new AuthFilter());
+    }
 
     private final Socket connection;
 
@@ -26,7 +32,7 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[{} {}] {}", request.getProtocol(), request.getMethod(), request.getUri());
 
-            HttpResponse response = Router.route(request);
+            HttpMessage response = requestPipeline.process(request);
 
             send(out, response);
         } catch (IOException e) {
@@ -34,17 +40,18 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    public void send(OutputStream out, HttpResponse response) throws IOException {
+    public void send(OutputStream out, HttpMessage response) throws IOException {
         DataOutputStream dos = new DataOutputStream(out);
 
         dos.writeBytes("HTTP/1.1 " + response.getStatusCode() + " " + response.getStatusMessage() + " \r\n");
-        if(response.getContentType() != ContentType.NONE)
+        if (response.getContentType() != ContentType.NONE)
             dos.writeBytes("Content-Type: " + response.getContentType() + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
         dos.writeBytes(response.getAdditionalHeaders());
+        dos.writeBytes(response.getCookies());
         dos.writeBytes("\r\n");
 
-        if(response.getBodyLength() > 0)
+        if (response.getBodyLength() > 0)
             dos.write(response.getBody(), 0, response.getBodyLength());
 
         dos.flush();

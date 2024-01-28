@@ -22,13 +22,18 @@ public class Router {
     static {
         Map<String, Function<HttpRequest, HttpResponse>> routeMap = new HashMap<>();
         routeMap.put("POST /user/create", userController::signUp);
+        routeMap.put("POST /user/login", userController::login);
 
         ROUTE_MAP = Collections.unmodifiableMap(routeMap);
     }
 
     public static HttpResponse route(HttpRequest httpRequest) {
-        String routeKey = httpRequest.getMethod() + " " + httpRequest.getPath();
+        String routeKey = getRouteKey(httpRequest);
         Function<HttpRequest, HttpResponse> handler = ROUTE_MAP.getOrDefault(routeKey, resourceController::resourceHandler);
         return handler.apply(httpRequest);
+    }
+
+    public static String getRouteKey(HttpRequest httpRequest) {
+        return httpRequest.getMethod() + " " + httpRequest.getPath();
     }
 }

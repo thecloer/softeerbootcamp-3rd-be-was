@@ -1,4 +1,4 @@
-# 현대자동차 소프티어 부트캠프 3기 BE WAS 과제
+# 현대자동차 소프티어 부트캠프 3기 BE - WAS 과제
 
 ## 프로젝트 정보
 
@@ -8,6 +8,30 @@
 
 이 프로젝트는 우아한 테크코스 박재성님의 허가를 받아 https://github.com/woowacourse/jwp-was
 를 참고하여 작성되었습니다.
+
+## WAS 구조
+
+![WAS 구조](./docs/was-architecture.png)
+
+- [WebServer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/WebServer.java):
+  웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당
+- [RequestHandler](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequestHandler.java):
+  클라이언트의 요청으로 부터 `Request` 객체를 생성하고 최종 응답을 클라이언트에게 전송
+- [RequestPipeline](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequesetPipline.java):
+  요청이에서 부터 응답까지의 파이프라인, 요청은 등록된 미들웨어들을 거쳐 컨트롤러까지 도달
+- [Router](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/Router.java):
+  요청과 컨트롤러의 핸들러를 매핑
+- [Controller](https://github.com/thecloer/softeerbootcamp-3rd-be-was/tree/thecloer/src/main/java/controller): 요청에 대한 메인
+  로직을 실행하는 부분
+
+## 프로젝트 진행 과정 기록
+
+- [1단계 - index.html 응답](#1단계---indexhtml-응답)
+- [2단계 - GET으로 회원가입](#2단계---get으로-회원가입)
+- [3단계 - 다양한 컨텐츠 타입 지원](#3단계---다양한-컨텐츠-타입-지원)
+- [4단계 - POST로 회원 가입](#4단계---post로-회원-가입)
+- [5단계 - 쿠키를 이용한 로그인](#5단계---쿠키를-이용한-로그인)
+- 6단계 - 동적인 HTML
 
 ## 1단계 - index.html 응답
 
@@ -40,11 +64,15 @@
 ### 구현 내용
 
 - Http request 로깅
-    - "[ {protocol} {method} ] {path?query#fragment}"
+    - `[ {protocol} {method} ] {path?query#fragment}`
+
+
 - 정적 파일 응답
     - 요청 리소스의 확장자에 따라 응답 헤더의 `Content-Type`설정, 리소스 경로 분기 응답
     - `.html` -> `resources/templates`
     - 이외 -> `resources/static`
+
+
 - `Concurrent` 패키지가 제공하는 스레드 풀을 이용해 요청 처리
     - 기존 `Thread` 클래스로 요청마다 스레드를 생성, 제거 하며 요청을 처리하는 방식에서 요청을 큐에 넣고 스레드 풀에서 사용 가능한 스레드가 요청을 꺼내 처리하는 방식으로 변경
 
@@ -95,12 +123,18 @@
 
 ### 구현 내용
 
-- "회원가입" 메뉴를 클릭하면 http://localhost:8080/user/form.html 으로 이동, 회원가입 폼을 표시
+- "회원가입" 메뉴를 클릭하면 `/user/form.html` 으로 이동, 회원가입 폼을 표시
+
+
 - 폼을 통한 회원가입
     - 회원가입 성공시 `/user/profile.html?userId={userId}`로 리다이렉트
     - 회원가입 실패시 `/user/form.html?message={errorMessage}`로 리다이렉트
         - step 3 완료 이후 프론트에서 메세지 표시 구현할 예정
+
+
 - 잘못된 경로 접근 시 404 페이지 리다이렉트
+
+
 - `Junit`을 활용한 단위 테스트 적용
     - `UserControllerTest`: 회원가입 요청을 받고 응답하는 테스트
     - `UserServiceTest`: DB에 회원 저장, 입력 형식 예외 테스트
@@ -168,6 +202,8 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 - 다양한 컨텐츠 타입을 지원
     - step 3를 보지못하고 step 1 정적 파일 응답에서 이미 구현
     - html, css, js, ico, png, svg, txt, eot, ttf, woff, woff2 지원
+
+
 - step 2에서 구현했던 회원가입 실패 시 클라이언트로 내려준 메세지 프론트에서 표시
     - 회원가입 실패 시 메세지 JSON 형태로 응답
         - 프론트에서 JSON 형태로 응답을 받아 메세지 표시
@@ -175,10 +211,14 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - `Location: /user/profile.html?userId={userId}`
         - 프론트에서 응답받은 URI로 회원 정보 요청
         - [참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
+
+
 - 유틸 클래스 테스트 코드 추가
+
+
 - 리팩터링
     - 디미터의 법칙
-      - [commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c)
+        - [commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c)
     - 메서드 가능하면 10줄 이하
     - 한 메서드는 하나의 기능
     - else 사용 지양
@@ -214,11 +254,13 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다.
 객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의 내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
 
-`Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한 부분([commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c))을 보면 직관적으로 이해할 수 있다.  
-이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리 스트링은 `Request`객체에 `Map`형태로 담겨있다는 것을 알아야 한다는 것을 의미한다.  
+`Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한
+부분([commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c))
+을 보면 직관적으로 이해할 수 있다.  
+이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리 스트링은 `Request`객체에 `Map`형태로 담겨있다는 것을 알아야
+한다는 것을 의미한다.  
 변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.  
 예시가 기본 타입처럼 자주 쓰이는 `Map`이기 때문에 적절한 예시인지는 모르겠으나 내부 구조를 몰라도 사용할 수 있는 인터페이스로 변경했다는 점에서 `드미어 법칙`을 적용한 예시라고 생각한다.
-
 
 ## 4단계 - POST로 회원 가입
 
@@ -269,13 +311,13 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 
 - 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
-    - 아래와 같은 방법을 구현할 수 있을 것 같다. 
+    - 아래와 같은 방법을 구현할 수 있을 것 같다.
         - `Exception`을 상속받는 예외 클래스를 구현
         - 어플리케이션에서 클라이언트로 전달하는 모든 예외를 해당 예외 객체로 래핑
-        - `RequestHandler`과 컨트롤러 사이에 인터셉터 레이어를 추가해 예외 객체를 받아 응답 객체로 변환 
+        - `RequestHandler`과 컨트롤러 사이에 인터셉터 레이어를 추가해 예외 객체를 받아 응답 객체로 변환
         - `RequestHandler`에서는 예외 객체와 정상 응답을 같은 응답 객체 혹은 인터페이스로 받아 클라이언트에 전달
-  - 위 구현 방법의 문제점은 어플리케이션의 예외 객체를 처리하는 부분(인터셉터 레이어)까지 거의 모든 메서드에 `throws CustomException`을 추가해야한다는 점이다.
-  - 이 부분에 대해서는 step 6까지 완료 한 후 마지막에 고민해보려한다.
+    - 위 구현 방법의 문제점은 어플리케이션의 예외 객체를 처리하는 부분(인터셉터 레이어)까지 거의 모든 메서드에 `throws CustomException`을 추가해야한다는 점이다.
+    - 이 부분에 대해서는 step 6까지 완료 한 후 마지막에 고민해보려한다.
 
 ### 기타
 
@@ -307,3 +349,60 @@ java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한�
 HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
 때 case-insensitive하게 고려해야한다.  
 [RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names)
+
+## 5단계 - 쿠키를 이용한 로그인
+
+### 학습 키워드 & 학습 목표
+
+> HTTP Cookie, HTTP Session
+
+- 쿠키와 세션을 이용한 로그인 방식을 이해하고 직접 구현할 수 있다.
+
+### 기능 요구사항
+
+- ✅ 가입한 회원 정보로 로그인을 할 수 있다.
+- ✅ [로그인] 메뉴를 클릭하면 /user/login.html 으로 이동해 로그인할 수 있다.
+- ✅ 로그인이 성공하면 /index.html로 이동한다.
+- ✅ 로그인이 실패하면 /user/login_failed.html로 이동한다.
+
+### 프로그래밍 요구사항
+
+- ✅ 로그인이 성공할 경우 HTTP 헤더의 쿠키 값을 SID=세션 ID 로 응답한다.
+- ✅ 세션 ID는 적당한 크기의 무작위 숫자 또는 문자열을 사용한다.
+- ✅ 서버는 세션 아이디에 해당하는 User 정보에 접근할 수 있어야 한다.
+
+### 구현 내용
+
+- 세션, 쿠키를 이용한 로그인 구현
+    - 가입한 회원 정보로 로그인
+        - 로그인 성공 시 세션을 생성하고 세션 쿠키 발급
+        - 로그인 실패 시 실패 이유 화면에 표시
+    - 쿠키에 저장된 세션 ID를 이용해 로그인 여부 확인
+        - `AuthFilter`를 통한 로그인 여부에 따라 특정 페이지 접근 제어
+            - 로그인 된 경우 로그인 페이지, 회원가입 페이지 접근 불가
+            - 로그인 되지 않은 경우 개인정보 페이지 접근 불가
+
+
+- 요청 파이프라인을 만들어 미들웨어 적용
+    - 요청 파이프라인은 요청에서 응답이 생성되는 과정의 실행 순서를 관리
+    - 요청 -> [ 미들웨어1 -> 미들웨어2 -> ... -> 라우터 -> 컨트롤러 ] -> 응답
+    - 등록된 미들웨어는 등록한 순서대로 실행
+    - 확장성을 위해 여러개의 미들웨어를 등록할 수 있도록 구현
+    - 필요하다면 컨트롤러에서 생성된 응답을 처리하는 미들웨어도 구현 가능
+
+
+- [step-4의 고민 사항](#고민-사항-3): 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+    - `HttpBaseException`을 통해 요청 파이프라인 내부에서 발행한 예외는 `RequestPipeline`에서 받아 바로 응답
+
+### 고민 사항
+
+#### 유연하고 확장성있는 프레임워크
+
+쿠키-세션을 이용한 로그인을 구현하며 확장성있는 구조에 대한 고민을 많이했다.  
+모든 요청에 적용해야하는 로직을 추가할 때 마다 클래스로 레이어를 만들어 기존 레이어 사이에 추가한다면 구조를 파악하기 힘들고 레이어의 순서를 하나하나 따라가며 확인해 봐야할 것이다.  
+`express.js`의 미들웨어에서 영감을 받아 요청 파이프라인을 만들어 미들웨어를 적용할 수 있도록 구현했다. 파이프라인을 통해 요청에서 응답이 생성되는 과정의 실행 순서를 관리할 수 있고 예외처리에 대한 개발
+편의성을 제공한다.  
+`RequestPipeline`은 하나의 거대한 인터셉터로 볼 수 있다.
+
+서비스의 규모가 커지고 기능이 추가되어도 컨트롤러의 핸들러를 작성하고 라우터에 등록하는 것으로 쉽게 확장할 수 있다. 지금은 라우터에 직접 핸들러를 등록하지만 어노테이션과 리플렉션을 이용해 라우터에 핸들러를 등록하는
+기능을 구현할 수 있다.

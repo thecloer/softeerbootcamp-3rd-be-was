@@ -1,12 +1,12 @@
 package controller;
 
 import db.Database;
+import exception.BadRequestException;
 import model.User.User;
 import model.User.UserBuilder;
-import util.http.ContentType;
-import util.http.HttpRequest;
-import util.http.HttpResponse;
-import util.http.HttpStatus;
+import session.Session;
+import session.SessionManager;
+import util.http.*;
 
 public class UserController {
 
@@ -17,34 +17,51 @@ public class UserController {
     }
 
     public HttpResponse signUp(HttpRequest request) {
-        try {
-            User user = UserBuilder.fromStringifiedJson(request.getBody());
+        User user = UserBuilder.fromStringifiedJson(request.getBody());
 
-            if (user.getUserId().isEmpty())
-                throw new IllegalArgumentException("userId가 입력되지 않았습니다.");
-            if (user.getPassword().isEmpty())
-                throw new IllegalArgumentException("password가 입력되지 않았습니다.");
-            if (user.getName().isEmpty())
-                throw new IllegalArgumentException("name이 입력되지 않았습니다.");
-            if (user.getEmail().isEmpty())
-                throw new IllegalArgumentException("email이 입력되지 않았습니다.");
+        if (user.getUserId().isEmpty())
+            throw new BadRequestException("userId가 입력되지 않았습니다.");
+        if (user.getPassword().isEmpty())
+            throw new BadRequestException("password가 입력되지 않았습니다.");
+        if (user.getName().isEmpty())
+            throw new BadRequestException("name이 입력되지 않았습니다.");
+        if (user.getEmail().isEmpty())
+            throw new BadRequestException("email이 입력되지 않았습니다.");
 
-            if (database.findUserById(user.getUserId()) != null)
-                throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
+        if (database.findUserById(user.getUserId()) != null)
+            throw new BadRequestException("이미 존재하는 아이디입니다.");
 
-            database.addUser(user);
+        database.addUser(user); // TODO: 비밀번호 암호화
 
-            return new HttpResponse.Builder()
-                    .status(HttpStatus.CREATED)
-                    .setHeader("Location", "/")
-                    .build();
+        return new HttpResponse.Builder()
+                .status(HttpStatus.CREATED)
+                .setHeader("Location", "/")
+                .build();
+    }
 
-        } catch (IllegalArgumentException e) {
-            return new HttpResponse.Builder()
-                    .status(HttpStatus.BAD_REQUEST)
-                    .contentType(ContentType.JSON)
-                    .body("{\"message\":\"" + e.getMessage() + "\"}")
-                    .build();
-        }
+    public HttpResponse login(HttpRequest request) {
+        User user = UserBuilder.fromStringifiedJson(request.getBody());
+
+        if (user.getUserId().isEmpty())
+            throw new BadRequestException("userId가 입력되지 않았습니다.");
+        if (user.getPassword().isEmpty())
+            throw new BadRequestException("password가 입력되지 않았습니다.");
+
+        User foundUser = database.findUserById(user.getUserId());
+        if (foundUser == null)
+            throw new BadRequestException("존재하지 않는 아이디입니다.");
+
+        if (!foundUser.getPassword().equals(user.getPassword())) // TODO: PW 일급객체 만들어 PW관련 로직 넣기
+            throw new BadRequestException("비밀번호가 일치하지 않습니다.");
+
+        Session session = SessionManager.createSession();
+        session.setAttribute("userId", user.getUserId());
+        String cookie = SessionManager.toCookieString(session);
+
+        return new HttpResponse.Builder()
+                .status(HttpStatus.FOUND)
+                .setHeader("Location", "/") // TODO: redirect("/");
+                .addCookie(cookie)
+                .build();
     }
 }
