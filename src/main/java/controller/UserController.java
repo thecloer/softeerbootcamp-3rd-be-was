@@ -35,7 +35,7 @@ public class UserController {
 
         return new HttpResponse()
                 .setStatus(HttpStatus.CREATED)
-                .setHeader("Location", "/");
+                .setField("Location", "/");
     }
 
     public HttpResponse login(HttpRequest request) {
@@ -59,7 +59,7 @@ public class UserController {
 
         return new HttpResponse()
                 .setStatus(HttpStatus.FOUND)
-                .setHeader("Location", "/") // TODO: redirect("/");
+                .setField("Location", "/") // TODO: redirect("/");
                 .addCookie(cookie);
     }
 }

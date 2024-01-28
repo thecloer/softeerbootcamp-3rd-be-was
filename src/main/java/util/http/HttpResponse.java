@@ -7,7 +7,7 @@ public class HttpResponse implements HttpMessage {
 
     private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
     private ContentType contentType = ContentType.NONE;
-    private final Map<String, String> additionalHeaders = new HashMap<>();
+    private final Map<String, String> fields = new HashMap<>();
     private byte[] body = new byte[0];
     private final List<String> cookies = new ArrayList<>();
 
@@ -30,9 +30,9 @@ public class HttpResponse implements HttpMessage {
     }
 
     @Override
-    public String getAdditionalHeaders() {
+    public String getFields() {
         StringBuilder additionalHeader = new StringBuilder();
-        for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
             additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
         }
         return additionalHeader.toString();
@@ -68,8 +68,8 @@ public class HttpResponse implements HttpMessage {
         return this;
     }
 
-    public HttpResponse setHeader(String key, String value) {
-        additionalHeaders.put(key, value);
+    public HttpResponse setField(String key, String value) {
+        fields.put(key, value);
         return this;
     }
 
@@ -94,7 +94,7 @@ public class HttpResponse implements HttpMessage {
                 .append("HttpResponse ")
                 .append("{ status=").append(status.getCode())
                 .append(", contentType=").append(contentType.getValue())
-                .append(", additionalHeader=").append(additionalHeaders)
+                .append(", fields=").append(fields)
                 .append(", body=").append(new String(body))
                 .append(" }")
                 .toString();

@@ -42,8 +42,8 @@ public class HttpBaseException extends RuntimeException implements HttpMessage {
     }
 
     @Override
-    public String getAdditionalHeaders() {
-        return response.getAdditionalHeaders();
+    public String getFields() {
+        return response.getFields();
     }
 
     @Override
@@ -61,8 +61,8 @@ public class HttpBaseException extends RuntimeException implements HttpMessage {
         return response.getCookies();
     }
 
-    public HttpBaseException setHeader(String key, String value) {
-        response.setHeader(key, value);
+    public HttpBaseException setField(String key, String value) {
+        response.setField(key, value);
         return this;
     }
 
