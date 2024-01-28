@@ -21,11 +21,10 @@ public class ResourceController {
         String base = (contentType == ContentType.HTML) ? TEMPLATE : STATIC;
 
         byte[] body = read(base + path);
-        return new HttpResponse.Builder()
-                .status(HttpStatus.OK)
-                .contentType(contentType)
-                .body(body)
-                .build();
+        return new HttpResponse()
+                .setStatus(HttpStatus.OK)
+                .setContentType(contentType)
+                .setBody(body);
     }
 
     private String redirectRoot(HttpMethod method, String path) {

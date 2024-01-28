@@ -13,19 +13,17 @@ public class HttpBaseException extends RuntimeException implements HttpMessage {
     private final HttpResponse response;
 
     public HttpBaseException(HttpStatus status) {
-        this.response = new HttpResponse.Builder()
-                .status(status)
-                .build();
+        this.response = new HttpResponse()
+                .setStatus(status);
     }
 
     public HttpBaseException(HttpStatus status, String message) {
         super(message);
         String jsonMessage = JSON.stringify(Map.of("message", message));
-        this.response = new HttpResponse.Builder()
-                .status(status)
-                .contentType(ContentType.JSON)
-                .body(jsonMessage)
-                .build();
+        this.response = new HttpResponse()
+                .setStatus(status)
+                .setContentType(ContentType.JSON)
+                .setBody(jsonMessage);
     }
 
     @Override
@@ -68,7 +66,7 @@ public class HttpBaseException extends RuntimeException implements HttpMessage {
         return this;
     }
 
-    public HttpBaseException setCookie(String cookie) {
+    public HttpBaseException addCookie(String cookie) {
         response.addCookie(cookie);
         return this;
     }

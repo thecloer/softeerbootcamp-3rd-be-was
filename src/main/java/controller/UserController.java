@@ -33,10 +33,9 @@ public class UserController {
 
         database.addUser(user); // TODO: 비밀번호 암호화
 
-        return new HttpResponse.Builder()
-                .status(HttpStatus.CREATED)
-                .setHeader("Location", "/")
-                .build();
+        return new HttpResponse()
+                .setStatus(HttpStatus.CREATED)
+                .setHeader("Location", "/");
     }
 
     public HttpResponse login(HttpRequest request) {
@@ -58,10 +57,9 @@ public class UserController {
         session.setAttribute("userId", user.getUserId());
         String cookie = SessionManager.toCookieString(session);
 
-        return new HttpResponse.Builder()
-                .status(HttpStatus.FOUND)
+        return new HttpResponse()
+                .setStatus(HttpStatus.FOUND)
                 .setHeader("Location", "/") // TODO: redirect("/");
-                .addCookie(cookie)
-                .build();
+                .addCookie(cookie);
     }
 }
