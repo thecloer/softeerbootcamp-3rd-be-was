@@ -451,16 +451,23 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 ### 기능 요구사항
 
-- [ ] 사용자가 로그인 상태일 경우 /index.html에서 사용자 이름을 표시해 준다.
-- [ ] 사용자가 로그인 상태가 아닐 경우 /index.html에서 [로그인] 버튼을 표시해 준다.
-- [ ] 사용자가 로그인 상태일 경우 /user/list 에서 사용자 목록을 출력한다.
-- [ ] /user/list 페이지 접근시 로그인하지 않은 상태일 경우 로그인 페이지(login.html)로 이동한다.
+- ✅ 사용자가 로그인 상태일 경우 /index.html에서 사용자 이름을 표시해 준다.
+- ✅ 사용자가 로그인 상태가 아닐 경우 /index.html에서 [로그인] 버튼을 표시해 준다.
+- ✅ 사용자가 로그인 상태일 경우 /user/list 에서 사용자 목록을 출력한다.
+- ✅ /user/list 페이지 접근시 로그인하지 않은 상태일 경우 로그인 페이지(login.html)로 이동한다.
 
 ### 프로그래밍 요구사항
 
-- [ ] 쿠키와 세션을 활용해서 주어진 요구사항을 만족하도록 구현한다.
+- ✅ 쿠키와 세션을 활용해서 주어진 요구사항을 만족하도록 구현한다.
 
 ### 구현 내용
+
+- 간단한 서버 사이드 랜더링 구현
+    - 응답 객체에 데이터를
+      추가하고 [TemplateRenderer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/pipeline/responseProcessor/templateEngine/TemplateRenderer.java)
+      를 통해 동적인 HTML을 생성해 응답
+    - HTML 파일에 `{{key}}`의 형태로 템플릿 키를 작성하고 응답 객체에 `key`에 해당하는 값을 추가하면 `{{key}}`가 `value`로 치환되어
+      응답 ([테스트 코드](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/test/java/pipeline/responseProcessor/TemplateRendererTest.java))
 
 ### 고민 사항
 
