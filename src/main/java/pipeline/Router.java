@@ -29,6 +29,7 @@ public class Router {
 
             put("POST /user/create", userController::signUp);
             put("POST /user/login", userController::login);
+            put("GET /user/logout", userController::logout);
         }});
 
         REDIRECT_TABLE = Collections.unmodifiableMap(new HashMap<>() {{

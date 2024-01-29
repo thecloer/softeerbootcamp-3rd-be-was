@@ -6,7 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionManager {
 
     public static final String COOKIE_KEY = "sid";
-    public static final Long TTL = 3600 * 1000L;
+    public static final Long SESSION_TTL = 3600 * 1000L;
+    private static final Long DEFAULT_COOKIE_TTL = 3600L;
     private static final ConcurrentHashMap<String, Session> storage = new ConcurrentHashMap<>();
 
     public static Session createSession() {
@@ -29,6 +30,9 @@ public class SessionManager {
     }
 
     public static String toCookieString(Session session) {
-        return COOKIE_KEY + "=" + session.getSessionId() + "; HttpOnly; Path=/; Max-Age=3600";
+        return toCookieString(session, DEFAULT_COOKIE_TTL);
+    }
+    public static String toCookieString(Session session, Long ttl) {
+        return COOKIE_KEY + "=" + session.getSessionId() + "; HttpOnly; Path=/; Max-Age=" + ttl;
     }
 }

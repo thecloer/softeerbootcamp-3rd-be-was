@@ -16,7 +16,7 @@ public class TemplateComponents {
         POSTS("Posts", "/index.html"),
         LOGIN("로그인", "/user/login.html"),
         REGISTER("회원가입", "/user/form.html"),
-        LOGOUT("로그아웃", "#"),
+        LOGOUT("로그아웃", "/user/logout"),
         MODIFY("개인정보수정", "#");
 
         private final String name;

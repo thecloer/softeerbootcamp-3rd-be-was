@@ -62,4 +62,16 @@ public class UserController {
                 .setField("Location", "/") // TODO: redirect("/");
                 .addCookie(cookie);
     }
+
+    public HttpResponse logout(HttpRequest request) {
+        Session session = request.getSession();
+        request.setSession(null);
+        SessionManager.distroySession(session.getSessionId());
+        String cookie = SessionManager.toCookieString(session, 0L);
+
+        return new HttpResponse()
+                .setStatus(HttpStatus.FOUND)
+                .setField("Location", "/")
+                .addCookie(cookie);
+    }
 }
