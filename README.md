@@ -33,6 +33,8 @@
 - [5단계 - 쿠키를 이용한 로그인](#5단계---쿠키를-이용한-로그인)
 - [6단계 - 동적인 HTML](#6단계---동적인-html)
 
+<br/>
+
 ## 1단계 - index.html 응답
 
 ### 학습 키워드 & 학습 목표
@@ -78,22 +80,27 @@
 
 ### 고민 사항
 
-- 요청 url에서 확장자를 추출하는 메서드는 어떤 클래스에 구현해야할까?
+- #### 요청 url에서 확장자를 추출하는 메서드는 어떤 클래스에 구현해야할까?
     - `ContentType` enum에 private 메서드로 구현 vs 새로운 클래스 혹은 URI extends 한 클래스
     - 우선 아직은 사용되는 곳이 Content-Type 뿐이므로 ContentType enum에 private 메서드로 구현
     - 추후 필요시 유틸 클래스 혹은 URI 클래스를 상속받는 클래스를 만들어 빼낼 예정
 
 
-- 오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?
+- #### 오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?
     - step-2에서 라우터를 구현 한뒤 예외에 따라 오류 메세지 혹은 오류 페이지 응답 해보자
 
 ### 기타
 
-- MIME(Multipurpose Internet Mail Extensions) type
-    - [MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
-    - [최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
-- 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리
-    - 블로그 정리 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+- #### MIME(Multipurpose Internet Mail Extensions) type
+
+[MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)  
+[최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
+
+- #### 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리
+
+블로그에 정리한 내용: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+
+<br/>
 
 ## 2단계 - GET으로 회원가입
 
@@ -144,12 +151,14 @@
 
 ### 고민 사항
 
-- `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
+- #### `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
+
     - `/`를 `/index.html`로 매핑하는 것은 루트 경로가 비어있을 경우 표시할 기본 경로 설정이라 생각
     - 기본 경로 설정은 라우터에서 필터링되지 않은 경로를 처리하는 `ResourceController`에 구현
 
 
-- `ApplicationContainer`와 `UserService`가 꼭 필요할까?
+- #### `ApplicationContainer`와 `UserService`가 꼭 필요할까?
+
     - `ApplicationContainer`
         - static 변수로 생성된 DB의 경우 테스트마다 DB 초기화 필요
         - 테스트를 위해 서비스에 불필요한 DB 초기화 메서드를 구현해야함
@@ -162,18 +171,21 @@
         - 컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리
 
 
-- 오류 응답 상태코드
+- #### 오류 응답 상태코드
     - 없는 경로 요청 시 404 Not Found 응답 vs 302 /404.html 페이지로 리다이렉트 응답
     - 회원가입 실패 시 400 Bad Request 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트
     - 사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현
 
 ### 기타
 
-#### HTTP GET 프로토콜
+- #### HTTP GET 프로토콜
 
 GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데이터에 영향을 주지 않는다.  
-데이터 요청에 필요한 추가 정보는 URI의 쿼리 스트링으로 전달할 수 있다. (예: `https://example.com/products?category=books&page=1`)
+데이터 요청에 필요한 추가 정보는 URI의 쿼리 스트링으로 전달할 수 있다.   
+(예: `https://example.com/products?category=books&page=1`)  
 자주 바뀌지 않는 데이터에 대한 GET 요청은 결과를 캐싱해 같은 요청이 재발생할 경우 빠르게 응답을 제공할 수 있다.
+
+<br/>
 
 ## 3단계 - 다양한 컨텐츠 타입 지원
 
@@ -226,7 +238,8 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 고민 사항
 
-- [step 2의 고민 사항](#고민-사항-1), 서비스 레이어에 대한 고민 사항에 대한 구현 변경
+- #### [step 2의 서비스 레이어에 대한 고민 사항](#applicationcontainer와-userservice가-꼭-필요할까) 구현 변경
+
     - ~~테스트 코드 작성의 편의를 위해 도입~~
     - ~~컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리~~
     - `RequestHandler`와 컨트롤러의 역할을 명확하게 분리
@@ -236,7 +249,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - 컨트롤러의 테스트가 어려워 생성했던 `UserService`는 도입했던 이유는 사라졌으므로 제거
 
 
-- [step 2의 고민 사항](#고민-사항-1), 오류 응답 상태코드에 대한 고민 사항에 대한 구현 변경
+- #### [step 2의 오류 응답 상태코드에 대한 고민 사항](#오류-응답-상태코드) 구현 변경
     - ~~없는 경로 요청 시 not found 404 응답 vs 302 리다이렉트 /404.html 응답~~
     - ~~회원가입 실패 시 bad request 400 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트~~
     - ~~사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현~~
@@ -248,19 +261,20 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기타
 
-#### 드미어 법칙
+- #### 드미어 법칙
 
-`드미어 법칙(Demeter's Law)` 혹은 `최소 지식 원칙(Principle of Least Knowledge)`은 객체 지향 프로그래밍에서 객체 간의 상호작용을 설계할 때 사용되는 지침 중 하나다.
-이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다.
-객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의 내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
+`드미어 법칙(Demeter's Law)` 혹은 `최소 지식 원칙(Principle of Least Knowledge)`은 객체 지향 프로그래밍에서 객체 간의 상호작용을 설계할 때 사용되는 지침 중
+하나다. 이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다. 객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의
+내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
 
-`Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한
+예를 들어 `Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한
 부분([commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c))
-을 보면 직관적으로 이해할 수 있다.  
-이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리 스트링은 `Request`객체에 `Map`형태로 담겨있다는 것을 알아야
-한다는 것을 의미한다.  
-변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.  
+을 보면 직관적으로 이해할 수 있다. 이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리
+스트링은 `Request`객체에 `Map`형태로 담겨있다는
+것을 알아야 한다는 것을 의미한다. 변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.
 예시가 기본 타입처럼 자주 쓰이는 `Map`이기 때문에 적절한 예시인지는 모르겠으나 내부 구조를 몰라도 사용할 수 있는 인터페이스로 변경했다는 점에서 `드미어 법칙`을 적용한 예시라고 생각한다.
+
+<br/>
 
 ## 4단계 - POST로 회원 가입
 
@@ -298,19 +312,22 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 고민 사항
 
-- 응답객체는 요청의 바디를 어떻게 처리해야 범용적으로 사용할 수 있을까?
+- #### 응답객체는 요청의 바디를 어떻게 처리해야 범용적으로 사용할 수 있을까?
+
     - 요청의 바디는 JSON, plain text등 다양한 형태일 수 있다.
     - 따라서 요청 객체는 문자열의 형태로 바디를 저장하고 바디를 사용하는 곳에서 적절한 형태로 변환해 사용하는 것이 좋다고 생각했다.
 
 
-- JSON 형태의 요청을 모델 객체로 변환하는 기능을 어떻게 구현할까?
+- #### JSON 형태의 요청을 모델 객체로 변환하는 기능을 어떻게 구현할까?
+
     - 모델마다 JSON 요청으로 모델 객체를 생성하는 기능을 구현할 수 있지만 모델이 많아질 경우 중복 코드가 많아질 것이라 생각했다.
     - 따라서 어노테이션과 리플렉션을 이용해 요청의 바디를 모델 객체로 변환하는 기능을 구현했다.
     - 객체의 필드와 JSON의 키값을 매핑하기 위해 어노테이션을 사용했고 리플렉션을 이용해 모델 객체를 생성하고 필드에 값을 할당했다.
     - 리플렉션으로 빈 모델 객체를 생성하기 위해 모든 모델에 공통적으로 인자가 없는 기본 생성자가 필요했고 이를 강제하기 위해 `Model`을 인터페이스가 아닌 추상 클래스로 구현했다.
 
 
-- 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+- #### 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+
     - 아래와 같은 방법을 구현할 수 있을 것 같다.
         - `Exception`을 상속받는 예외 클래스를 구현
         - 어플리케이션에서 클라이언트로 전달하는 모든 예외를 해당 예외 객체로 래핑
@@ -321,7 +338,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기타
 
-#### `java.nio`와 `java.io`
+- #### `java.nio`와 `java.io`
 
 `java.io`는 java 1.0 부터 지원되는 I/O 패키지로 전통적인 블로킹 I/O 모델을 사용한다.
 스트림 기반 I/O로 바이트 스트림(InputStream, OutputStream)과 문자 스트림(Reader, Writer)으로 나뉜다.
@@ -344,7 +361,7 @@ java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한�
 과제에서 제작 중인 웹서버의 경우 `Thread per Request` 방식으로 동작하며 요청당 최대 하나의 정적 페이지를 마지막에 읽어온다.
 따라서 `java.nio`를 사용해 non-blocking 비동기 I/O로 구현했을 때 얻을 수 있는 이점은 크지 않다.
 
-#### HTTP Field는 case-insensitive
+- #### HTTP Field는 case-insensitive
 
 HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
 때 case-insensitive하게 고려해야한다.
@@ -363,6 +380,8 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 > value.
 
 [RFC HTTP Semantics (Field values)](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.5-3)
+
+<br/>
 
 ## 5단계 - 쿠키를 이용한 로그인
 
@@ -404,13 +423,12 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
     - 확장성을 위해 여러개의 미들웨어를 등록할 수 있도록 구현
     - 필요하다면 컨트롤러에서 생성된 응답을 처리하는 미들웨어도 구현 가능
 
-
-- [step-4의 고민 사항](#고민-사항-3): 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+- [step 4의 고민 사항, 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?](#어플리케이션-어디에서나-예외를-통해-바로-응답할-수는-없을까) 구현
     - `HttpBaseException`을 통해 요청 파이프라인 내부에서 발행한 예외는 `RequestPipeline`에서 받아 바로 응답
 
 ### 고민 사항
 
-#### 유연하고 확장성있는 프레임워크
+- #### 유연하고 확장성있는 프레임워크
 
 쿠키-세션을 이용한 로그인을 구현하며 확장성있는 구조에 대한 고민을 많이했다.  
 모든 요청에 적용해야하는 로직을 추가할 때 마다 클래스로 레이어를 만들어 기존 레이어 사이에 추가한다면 구조를 파악하기 힘들고 레이어의 순서를 하나하나 따라가며 확인해 봐야할 것이다.  
@@ -420,6 +438,8 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 서비스의 규모가 커지고 기능이 추가되어도 컨트롤러의 핸들러를 작성하고 라우터에 등록하는 것으로 쉽게 확장할 수 있다. 지금은 라우터에 직접 핸들러를 등록하지만 어노테이션과 리플렉션을 이용해 라우터에 핸들러를 등록하는
 기능을 구현할 수 있다.
+
+<br/>
 
 ## 6단계 - 동적인 HTML
 
@@ -444,7 +464,7 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 ### 고민 사항
 
-#### 스레드 풀의 사이즈
+- #### 스레드 풀의 사이즈
 
 기존 스레드 풀의 사이즈는 JVM이 사용할 수 있는 프로세서의 수 + 1개로 설정했다.
 
@@ -475,11 +495,13 @@ ExecutorService executorService = new ThreadPoolExecutor(
 ```
 
 [Apache Tomcat 11 Configuration Reference](https://tomcat.apache.org/tomcat-11.0-doc/config/executor.html)
+
 > maxThreads: default is 200  
 > minSpareThreads: default is 25
 
-[Ling Y., Mullen T., & Lin X. (2000). *Analysis of Optimal Thread Pool
-Size*. Telcordia Technologies. Department of Electrical Engineering, Hong Kong University.](https://dl.acm.org/doi/pdf/10.1145/346152.346320)
+[Ling Y., Mullen T., & Lin X. (2000). _Analysis of Optimal Thread Pool
+Size_. Telcordia Technologies. Department of Electrical Engineering, Hong Kong University.](https://dl.acm.org/doi/pdf/10.1145/346152.346320)
+
 > Currently, thread pool size is set via a combination of heuristics and practical experience.
 > A heuristic is used to set the initial pool size, and then operators are advised to monitor the
 > system load and to modify the pool size if there are performance bottlenecks [Ca197]. One such
