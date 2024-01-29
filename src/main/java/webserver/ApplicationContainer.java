@@ -5,6 +5,7 @@ import controller.ResourceController;
 import controller.UserController;
 import pipeline.requestProcessor.AuthFilter;
 import pipeline.RequestPipeline;
+import pipeline.responseProcessor.TemplateEngine;
 
 public class ApplicationContainer {
 
@@ -17,6 +18,7 @@ public class ApplicationContainer {
 
     static {
         requestPipeline.addRequestProcessor(new AuthFilter());
+        requestPipeline.addResponseProcessor(new TemplateEngine());
     }
 
     public static ResourceController getResourceController() {

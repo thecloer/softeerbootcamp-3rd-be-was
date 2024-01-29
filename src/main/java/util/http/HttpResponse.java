@@ -10,6 +10,7 @@ public class HttpResponse implements HttpMessage {
     private final Map<String, String> fields = new HashMap<>();
     private byte[] body = new byte[0];
     private final List<String> cookies = new ArrayList<>();
+    private final Map<String, String> templateData = new HashMap<>();
 
     public HttpResponse() {
     }
@@ -58,6 +59,10 @@ public class HttpResponse implements HttpMessage {
         return cookieBuilder.toString();
     }
 
+    public String getTemplateData(String key) {
+        return templateData.getOrDefault(key, "");
+    }
+
     public HttpResponse setStatus(HttpStatus status) {
         this.status = status;
         return this;
@@ -85,6 +90,11 @@ public class HttpResponse implements HttpMessage {
 
     public HttpResponse setBody(byte[] body) {
         this.body = body;
+        return this;
+    }
+
+    public HttpResponse setTemplateData(String key, String value) {
+        templateData.put(key, value);
         return this;
     }
 
