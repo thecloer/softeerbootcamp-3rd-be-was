@@ -469,6 +469,11 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
     - HTML 파일에 `{{key}}`의 형태로 템플릿 키를 작성하고 응답 객체에 `key`에 해당하는 값을 추가하면 `{{key}}`가 `value`로 치환되어
       응답 ([테스트 코드](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/test/java/pipeline/responseProcessor/TemplateRendererTest.java))
 
+
+- 요청 파이프라인에 미들웨어 대신 프로세서를 적용
+    - 요청과 응답 처리를 구분하기 위해 미들웨어를 `RequestProcessor`, `ResponseProcessor`으로 분리
+    - 프로세서를 파이프라인에 등록하는 것으로 특정 혹은 모든 요청과 응답에 적용해야 할 작업을 쉽게 추가할 수 있도록 구현
+
 ### 고민 사항
 
 - #### 스레드 풀의 사이즈
@@ -518,4 +523,17 @@ Size_. Telcordia Technologies. Department of Electrical Engineering, Hong Kong U
 > client requests. <u>The thread pool's maximum size is heuristically set to be two times of the
 > number of megabytes of RAM in the host</u> [Ric96].
 
-### 기타
+- #### 로그인 여부에 따른 동적 네비게이션 바
+
+`Thymeleaf`에서 영감을 받아 동적 HTML을 구현했다. 작동 방식은 컨트롤러에서 데이터를 응답 객체에 추가하고 응답 객체에 추가된 데이터를 `TemplateRenderer`가 HTML의 적절한 곳에 삽입하며
+동작한다.
+
+여기서 생기는 문제는 네비게이션 바였다. 네비게이션 바는 모든 페이지에 있으며 항상 로그인 상태에따라 다르게 표시되어야 한다. 즉, 모든 HTML이 동적 HTML이고 모든 HTML에 대한 핸들러를
+생성해야 함을 의미했다.
+
+단순히 로그인 여부에 따라 지정된 네비게이션 바를 삽입하기 위해 모든 HTML에 대응하는 핸들러를 만드는 건 비효율 적이라고 생각했다.
+
+컨트롤러에서 "만" 데이터를 삽입해야 한다는 생각 때문에 이런 고민을 했던 것 같다. 생각보다 간단하게 해결 했는데 `CommonComponentIjector`를 통해 여러 페이지에 공통적으로 사용되는 동적 HTML
+컴포넌트를 삽입하도록 구현했다.
+
+동적 HTML 컴포넌트들을 HTML 파일로 관리하고 서버 로딩 시점에 읽어와도 괜찮을 것 같다.
