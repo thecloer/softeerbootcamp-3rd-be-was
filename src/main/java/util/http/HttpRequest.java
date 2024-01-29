@@ -68,6 +68,10 @@ public class HttpRequest {
         this.session = session;
     }
 
+    public Boolean isLoggedIn() {
+        return session != null;
+    }
+
     public static class Builder {
         private final Map<String, String> properties = new HashMap<>();
         private HttpMethod method;

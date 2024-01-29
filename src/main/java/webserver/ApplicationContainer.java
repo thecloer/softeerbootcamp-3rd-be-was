@@ -11,7 +11,7 @@ public class ApplicationContainer {
 
     private static final Database database = new Database();
 
-    private static final ResourceController resourceController = new ResourceController();
+    private static final ResourceController resourceController = new ResourceController(database);
     private static final UserController userController = new UserController(database);
 
     private static final RequestPipeline requestPipeline = new RequestPipeline();

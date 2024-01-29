@@ -14,8 +14,8 @@ public class AuthFilter implements RequestProcessor {
             "GET /user/profile.html"
     );
     private static final Set<String> UNAUTHENTICATED = Set.of(
-            "GET /user/login.html",
-            "GET /user/form.html"
+            "GET /user/login",
+            "GET /user/form"
     );
 
     @Override

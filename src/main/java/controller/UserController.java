@@ -54,7 +54,7 @@ public class UserController {
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
 
         Session session = SessionManager.createSession();
-        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userId", user.getUserId()); // TODO: 세션에 들어간 데이터 "userId" 상수로 관리
         String cookie = SessionManager.toCookieString(session);
 
         return new HttpResponse()

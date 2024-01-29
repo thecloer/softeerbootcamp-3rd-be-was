@@ -19,22 +19,35 @@ public class Router {
     private static final ResourceController resourceController = ApplicationContainer.getResourceController();
 
     private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTING_TABLE;
+    private static final Map<String, String> REDIRECT_TABLE;
 
     static {
-        Map<String, Function<HttpRequest, HttpResponse>> routeMap = new HashMap<>();
-        routeMap.put("POST /user/create", userController::signUp);
-        routeMap.put("POST /user/login", userController::login);
+        ROUTING_TABLE = Collections.unmodifiableMap(new HashMap<>() {{
+            put("GET /index.html", resourceController::homePage);
+            put("GET /user/profile.html", resourceController::profilePage);
+            put("GET /user/list.html", resourceController::userListPage);
 
-        ROUTING_TABLE = Collections.unmodifiableMap(routeMap);
+            put("POST /user/create", userController::signUp);
+            put("POST /user/login", userController::login);
+        }});
+
+        REDIRECT_TABLE = Collections.unmodifiableMap(new HashMap<>() {{
+            put("GET /", "GET /index.html");
+        }});
     }
 
     public static HttpResponse route(HttpRequest httpRequest) {
         String routeKey = getRouteKey(httpRequest);
-        Function<HttpRequest, HttpResponse> handler = ROUTING_TABLE.getOrDefault(routeKey, resourceController::resourceHandler);
+        Function<HttpRequest, HttpResponse> handler = ROUTING_TABLE.getOrDefault(routeKey, resourceController::staticHandler);
         return handler.apply(httpRequest);
     }
 
     public static String getRouteKey(HttpRequest httpRequest) {
-        return httpRequest.getMethod() + " " + httpRequest.getPath();
+        String routeKey = httpRequest.getMethod() + " " + httpRequest.getPath();
+        return redirect(routeKey);
+    }
+
+    private static String redirect(String routeKey) {
+        return REDIRECT_TABLE.getOrDefault(routeKey, routeKey);
     }
 }
