@@ -6,6 +6,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import pipeline.responseProcessor.templateEngine.TemplateRenderer;
 import util.http.ContentType;
+import util.http.HttpRequest;
 import util.http.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
@@ -24,14 +25,14 @@ class TemplateRendererTest {
     @DisplayName("템플릿 엔진은 템플릿의 키({{key}})를 해당 키에 대응되는 값으로 치환한다.")
     void templateEngine_process(String template, Map<String, String> templateData, String expected) {
         // given
-
+        HttpRequest request = null;
         HttpResponse response = new HttpResponse()
                 .setContentType(ContentType.HTML)
                 .setBody(template);
         templateData.forEach(response::setTemplateData);
 
         // when
-        response = templateRenderer.process(response);
+        response = templateRenderer.process(request, response);
 
         // then
         assertThat(new String(response.getBody(), StandardCharsets.UTF_8)).isEqualTo(expected);

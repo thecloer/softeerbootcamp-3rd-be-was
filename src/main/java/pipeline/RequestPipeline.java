@@ -21,7 +21,7 @@ public class RequestPipeline {
 
             HttpResponse response = Router.route(request);
 
-            return processResponse(response);
+            return processResponse(request, response);
         } catch (HttpBaseException errorResponse) {
             return errorResponse;
         }
@@ -34,9 +34,9 @@ public class RequestPipeline {
         return request;
     }
 
-    private HttpResponse processResponse(HttpResponse response) {
+    private HttpResponse processResponse(HttpRequest request, HttpResponse response) {
         for (ResponseProcessor responseProcessor : responseProcessors)
-            response = responseProcessor.process(response);
+            response = responseProcessor.process(request, response);
 
         return response;
     }

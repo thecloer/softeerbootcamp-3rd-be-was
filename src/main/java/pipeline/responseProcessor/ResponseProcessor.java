@@ -1,7 +1,8 @@
 package pipeline.responseProcessor;
 
+import util.http.HttpRequest;
 import util.http.HttpResponse;
 
 public interface ResponseProcessor {
-    HttpResponse process(HttpResponse response);
+    HttpResponse process(HttpRequest request, HttpResponse response);
 }

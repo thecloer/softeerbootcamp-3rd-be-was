@@ -2,6 +2,7 @@ package pipeline.responseProcessor.templateEngine;
 
 import pipeline.responseProcessor.ResponseProcessor;
 import util.http.ContentType;
+import util.http.HttpRequest;
 import util.http.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
@@ -9,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 public class TemplateRenderer implements ResponseProcessor {
 
     @Override
-    public HttpResponse process(HttpResponse response) {
+    public HttpResponse process(HttpRequest request, HttpResponse response) {
         if (!shouldProcess(response))
             return response;
 
