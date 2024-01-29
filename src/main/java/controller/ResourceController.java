@@ -71,7 +71,7 @@ public class ResourceController {
 
         Collection<User> users = database.findAll();
 
-        String userListComponent = TemplateComponents.userListComponent(users);
+        String userListComponent = TemplateComponents.userList(users);
 
         return response
                 .setTemplateData("userListComponent", userListComponent);
