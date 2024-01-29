@@ -11,7 +11,7 @@
 
 ## WAS 구조
 
-![WAS 구조](./docs/was-architecture.png)
+![WAS 구조](docs/images/was-architecture.png)
 
 - [WebServer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/WebServer.java):
   웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당
