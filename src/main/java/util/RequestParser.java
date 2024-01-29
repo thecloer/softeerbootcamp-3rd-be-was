@@ -53,10 +53,7 @@ public class RequestParser {
             String contentLengthValue = builder.getProperty("content-length");
             int contentLength = Integer.parseInt(contentLengthValue.trim()); // TODO: contentLength > Integer.MAX_VALUE 일 경우 예외처리
             char[] buffer = new char[contentLength]; // TODO: buffer size 작게 하고 while 문으로 읽기
-            int bytesRead = br.read(buffer, 0, contentLength);
-            if (bytesRead != contentLength) {
-                throw new IOException("Content-Length와 실제 Body의 길이가 다릅니다.");
-            }
+            br.read(buffer, 0, contentLength);
 
             builder.body(new String(buffer));
 
