@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import pipeline.responseProcessor.templateEngine.TemplateRenderer;
 import util.http.ContentType;
 import util.http.HttpResponse;
 
@@ -14,9 +15,9 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TemplateEngineTest {
+class TemplateRendererTest {
 
-    private final TemplateEngine templateEngine = new TemplateEngine();
+    private final TemplateRenderer templateRenderer = new TemplateRenderer();
 
     @ParameterizedTest
     @MethodSource("templateEngineTestCases")
@@ -30,7 +31,7 @@ class TemplateEngineTest {
         templateData.forEach(response::setTemplateData);
 
         // when
-        response = templateEngine.process(response);
+        response = templateRenderer.process(response);
 
         // then
         assertThat(new String(response.getBody(), StandardCharsets.UTF_8)).isEqualTo(expected);

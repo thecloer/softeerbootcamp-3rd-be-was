@@ -6,11 +6,13 @@ import exception.RedirectException;
 import model.User.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pipeline.responseProcessor.templateEngine.TemplateComponents;
 import session.Session;
 import util.FileReader;
 import util.http.*;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class ResourceController {
 
@@ -26,7 +28,7 @@ public class ResourceController {
     }
 
     public HttpResponse homePage(HttpRequest request) {
-        HttpResponse response = makeTemplateResponse("/index.html"); // TODO: 로그인 상태에 따라 컨트롤러 분리
+        HttpResponse response = makeBaseTemplateResponse("/index.html"); // TODO: 로그인 상태에 따라 컨트롤러 분리
         if (!request.isLoggedIn())
             return response;
 
@@ -44,7 +46,7 @@ public class ResourceController {
     }
 
     public HttpResponse profilePage(HttpRequest request) {
-        HttpResponse response = makeTemplateResponse(request.getPath());
+        HttpResponse response = makeBaseTemplateResponse(request.getPath());
         if (!request.isLoggedIn())
             return response;
 
@@ -63,10 +65,16 @@ public class ResourceController {
     }
 
     public HttpResponse userListPage(HttpRequest request) {
-        return new HttpResponse()
-                .setStatus(HttpStatus.OK)
-                .setContentType(ContentType.HTML)
-                .setBody(read(TEMPLATE + "/user/list.html"));
+        HttpResponse response = makeBaseTemplateResponse(request.getPath());
+        if (!request.isLoggedIn())
+            return response;
+
+        Collection<User> users = database.findAll();
+
+        String userListComponent = TemplateComponents.userListComponent(users);
+
+        return response
+                .setTemplateData("userListComponent", userListComponent);
     }
 
     public HttpResponse staticHandler(HttpRequest request) {
@@ -81,7 +89,7 @@ public class ResourceController {
                 .setBody(body);
     }
 
-    private HttpResponse makeTemplateResponse(String path) {
+    private HttpResponse makeBaseTemplateResponse(String path) {
         return new HttpResponse()
                 .setStatus(HttpStatus.OK)
                 .setContentType(ContentType.HTML)

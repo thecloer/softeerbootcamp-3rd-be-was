@@ -1,11 +1,12 @@
-package pipeline.responseProcessor;
+package pipeline.responseProcessor.templateEngine;
 
+import pipeline.responseProcessor.ResponseProcessor;
 import util.http.ContentType;
 import util.http.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
 
-public class TemplateEngine implements ResponseProcessor {
+public class TemplateRenderer implements ResponseProcessor {
 
     @Override
     public HttpResponse process(HttpResponse response) {
@@ -24,12 +25,10 @@ public class TemplateEngine implements ResponseProcessor {
                 if (isKeyOpen) {
                     processedBody.append("{{").append(templateKey);
                     templateKey.setLength(0);
-                }
-                else
+                } else
                     isKeyOpen = true;
                 i++;
-            }
-            else if (i + 1 < body.length && body[i] == '}' && body[i + 1] == '}') {
+            } else if (i + 1 < body.length && body[i] == '}' && body[i + 1] == '}') {
                 if (!isKeyOpen) {
                     processedBody.append(body[i]);
                     continue;
@@ -41,8 +40,7 @@ public class TemplateEngine implements ResponseProcessor {
                 String data = response.getTemplateData(key);
                 processedBody.append(data);
                 templateKey.setLength(0);
-            }
-            else if (isKeyOpen)
+            } else if (isKeyOpen)
                 templateKey.append(body[i]);
             else // 탬플릿 키와 관련 없는 문자열은 그대로 출력
                 processedBody.append(body[i]);
