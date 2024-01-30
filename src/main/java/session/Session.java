@@ -33,4 +33,13 @@ public class Session {
     public Boolean isExpired() {
         return System.currentTimeMillis() - lastAccessedTime > SessionManager.SESSION_TTL;
     }
+
+    @Override
+    public String toString() {
+        return "Session { " +
+                "sessionId='" + sessionId + '\'' +
+                ", attributes=" + attributes +
+                ", lastAccessedTime=" + lastAccessedTime +
+                " }";
+    }
 }
