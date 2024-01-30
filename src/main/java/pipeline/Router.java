@@ -1,5 +1,6 @@
 package pipeline;
 
+import controller.PostController;
 import controller.ResourceController;
 import controller.UserController;
 
@@ -16,6 +17,7 @@ import java.util.HashMap;
 public class Router {
 
     private static final UserController userController = ApplicationContainer.getUserController();
+    private static final PostController postController = ApplicationContainer.getPostController();
     private static final ResourceController resourceController = ApplicationContainer.getResourceController();
 
     private static final Map<String, Function<HttpRequest, HttpResponse>> ROUTING_TABLE;
@@ -30,6 +32,7 @@ public class Router {
             put("POST /user/create", userController::signUp);
             put("POST /user/login", userController::login);
             put("GET /user/logout", userController::logout);
+            put("POST /post/create", postController::createPost);
         }});
 
         REDIRECT_TABLE = Collections.unmodifiableMap(new HashMap<>() {{

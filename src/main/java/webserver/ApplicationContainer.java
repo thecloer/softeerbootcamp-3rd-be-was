@@ -1,5 +1,6 @@
 package webserver;
 
+import controller.PostController;
 import db.Database;
 import controller.ResourceController;
 import controller.UserController;
@@ -15,6 +16,7 @@ public class ApplicationContainer {
 
     private static final ResourceController resourceController = new ResourceController(database);
     private static final UserController userController = new UserController(database);
+    private static final PostController postController = new PostController(database);
 
     private static final RequestPipeline requestPipeline = new RequestPipeline();
 
@@ -32,6 +34,10 @@ public class ApplicationContainer {
 
     public static UserController getUserController() {
         return userController;
+    }
+
+    public static PostController getPostController() {
+        return postController;
     }
 
     public static RequestPipeline getRequestPipeline() {
