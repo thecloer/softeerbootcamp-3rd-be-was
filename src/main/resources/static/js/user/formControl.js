@@ -32,6 +32,17 @@
         event.preventDefault();
         const formData = new FormData($form);
 
+        const file = formData.get("file");
+
+        if (file) {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+                console.log(fileReader.result);
+                formData.set("file", fileReader.result);
+            };
+        }
+
         const response = await fetch(PATH, {
             method: "POST",
             body: JSON.stringify(Object.fromEntries(formData.entries())),
