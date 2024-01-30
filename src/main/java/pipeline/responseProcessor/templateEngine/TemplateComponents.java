@@ -2,6 +2,7 @@ package pipeline.responseProcessor.templateEngine;
 
 import model.Post.Post;
 import model.User.User;
+import util.Formatter;
 import util.UriHelper;
 
 import java.text.SimpleDateFormat;
@@ -78,15 +79,13 @@ public class TemplateComponents {
     }
 
     public static String postList(Collection<Post> posts) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
         StringBuilder component = new StringBuilder();
 
         for (Post post : posts) {
-            String date = dateFormat.format(post.getCreatedAt());
+            String date = Formatter.dateToString(post.getCreatedAt());
             component
                     .append("<li><div class=\"wrap\"><div class=\"main\">")
-                    .append("<strong class=\"subject\"><a href=\"post/show.html\">")
+                    .append("<strong class=\"subject\"><a href=\"post/show.html?postId=").append(UriHelper.encode(post.getPostId())).append("\">")
                     .append(post.getTitle())
                     .append("</a></strong>")
                     .append("<div class=\"auth-info\">")
