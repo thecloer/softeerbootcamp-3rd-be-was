@@ -28,10 +28,12 @@ public class PostController {
 
         Session session = request.getSession();
 
+        String userId = session.getAttribute("userId");
         String authorName = session.getAttribute("username");
 
         Post post = new PostBuilder()
                 .title(body.getTitle())
+                .authorId(userId)
                 .author(authorName)
                 .content(body.getContents())
                 .build();

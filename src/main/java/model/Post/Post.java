@@ -9,6 +9,7 @@ public class Post extends Model {
     private String postId;
     @Column("title")
     private String title;
+    private String authorId;
     private String author;
     @Column("contents")
     private String contents;
@@ -18,9 +19,10 @@ public class Post extends Model {
         super();
     }
 
-    public Post(String postId, String title, String author, String contents, Date createdAt) {
+    public Post(String postId, String title, String authorId, String author, String contents, Date createdAt) {
         this.postId = postId;
         this.title = title;
+        this.authorId = authorId;
         this.author = author;
         this.contents = contents;
         this.createdAt = createdAt;
@@ -32,6 +34,10 @@ public class Post extends Model {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getAuthorId() {
+        return authorId;
     }
 
     public String getAuthor() {
@@ -51,6 +57,7 @@ public class Post extends Model {
         return new StringBuilder()
                 .append("Post [postId=").append(postId)
                 .append(", title=").append(title)
+                .append(", authorId=").append(authorId)
                 .append(", author=").append(author)
                 .append(", content=").append(contents)
                 .append("]")

@@ -7,6 +7,7 @@ import java.util.UUID;
 
 public class PostBuilder {
     private String title;
+    private String authorId;
     private String author;
     private String content;
 
@@ -16,6 +17,11 @@ public class PostBuilder {
 
     public PostBuilder title(String title) {
         this.title = title;
+        return this;
+    }
+
+    public PostBuilder authorId(String authorId) {
+        this.authorId = authorId;
         return this;
     }
 
@@ -31,6 +37,6 @@ public class PostBuilder {
 
     public Post build() {
         String postId = UUID.randomUUID().toString();
-        return new Post(postId, title, author, content, new Date());
+        return new Post(postId, title, authorId, author, content, new Date());
     }
 }
