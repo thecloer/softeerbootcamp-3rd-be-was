@@ -29,6 +29,7 @@ public class ResourceController {
 
     public HttpResponse homePage(HttpRequest request) {
         HttpResponse response = makeBaseTemplateResponse("/index.html"); // TODO: 로그인 상태에 따라 컨트롤러 분리
+        response.setTemplateData("postListComponent", TemplateComponents.postList(database.findAllPosts()));
         if (!request.isLoggedIn())
             return response;
 

@@ -1,7 +1,10 @@
 package pipeline.responseProcessor.templateEngine;
 
+import model.Post.Post;
 import model.User.User;
+import util.UriHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -61,13 +64,39 @@ public class TemplateComponents {
 
         int nth = 0;
         for (User user : users) {
-            component.append("<tr>");
-            component.append("<th scope=\"row\">").append(++nth).append("</th>");
-            component.append("<td>").append(user.getUserId()).append("</td>");
-            component.append("<td>").append(user.getName()).append("</td>");
-            component.append("<td>").append(user.getEmail()).append("</td>");
-            component.append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>");
-            component.append("</tr>");
+            component
+                    .append("<tr>")
+                    .append("<th scope=\"row\">").append(++nth).append("</th>")
+                    .append("<td>").append(user.getUserId()).append("</td>")
+                    .append("<td>").append(user.getName()).append("</td>")
+                    .append("<td>").append(user.getEmail()).append("</td>")
+                    .append("<td><a href=\"#\" class=\"btn btn-success\" role=\"button\">수정</a></td>")
+                    .append("</tr>");
+        }
+
+        return component.toString();
+    }
+
+    public static String postList(Collection<Post> posts) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        StringBuilder component = new StringBuilder();
+
+        for (Post post : posts) {
+            String date = dateFormat.format(post.getCreatedAt());
+            component
+                    .append("<li><div class=\"wrap\"><div class=\"main\">")
+                    .append("<strong class=\"subject\"><a href=\"post/show.html\">")
+                    .append(post.getTitle())
+                    .append("</a></strong>")
+                    .append("<div class=\"auth-info\">")
+                    .append("<i class=\"icon-add-comment\"></i>")
+                    .append("<span class=\"time\">").append(date).append("</span>")
+                    .append("<a href=\"./user/profile.html?user=").append(UriHelper.encode(post.getAuthor())).append("\" class=\"author\">")
+                    .append(post.getAuthor())
+                    .append("</a>")
+                    .append("</div>")
+                    .append("</div></div></li>");
         }
 
         return component.toString();
