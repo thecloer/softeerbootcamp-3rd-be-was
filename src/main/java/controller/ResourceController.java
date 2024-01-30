@@ -62,7 +62,7 @@ public class ResourceController {
         if (!request.isLoggedIn())
             return response;
 
-        Collection<User> users = database.findAll();
+        Collection<User> users = database.findAllUsers();
 
         String userListComponent = TemplateComponents.userList(users);
 

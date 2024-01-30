@@ -25,7 +25,7 @@ public class Database {
         return users.get(userId);
     }
 
-    public Collection<User> findAll() {
+    public Collection<User> findAllUsers() {
         return users.values();
     }
 
@@ -38,7 +38,7 @@ public class Database {
         return posts.get(postId);
     }
 
-    public Collection<Post> findAllPost() {
+    public Collection<Post> findAllPosts() {
         return posts.values();
     }
 }
