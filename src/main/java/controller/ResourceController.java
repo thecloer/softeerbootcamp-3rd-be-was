@@ -3,12 +3,15 @@ package controller;
 import db.Database;
 import exception.BadRequestException;
 import exception.RedirectException;
+import model.Post.Post;
 import model.User.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pipeline.responseProcessor.templateEngine.TemplateComponents;
 import session.Session;
 import util.FileReader;
+import util.Formatter;
+import util.UriHelper;
 import util.http.*;
 
 import java.io.IOException;
@@ -56,6 +59,26 @@ public class ResourceController {
         return response
                 .setTemplateData("name", user.getName())
                 .setTemplateData("email", user.getEmail());
+    }
+
+    public HttpResponse postPage(HttpRequest request) {
+        String queryParamPostId = request.getQueryParam("postid");
+        if (queryParamPostId.isEmpty())
+            throw new RedirectException("/index.html");
+
+        String postId = UriHelper.decode(queryParamPostId);
+
+        Post post = database.findPostById(postId);
+        if (post == null)
+            throw new BadRequestException("존재하지 않는 글입니다.");
+
+        String createdDate = Formatter.dateToString(post.getCreatedAt());
+
+        return makeBaseTemplateResponse(request.getPath())
+                .setTemplateData("title", post.getTitle())
+                .setTemplateData("author", post.getAuthor())
+                .setTemplateData("contents", post.getContents())
+                .setTemplateData("createdDate", createdDate);
     }
 
     public HttpResponse userListPage(HttpRequest request) {

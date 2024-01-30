@@ -28,6 +28,7 @@ public class Router {
             put("GET /index.html", resourceController::homePage);
             put("GET /user/profile.html", resourceController::profilePage);
             put("GET /user/list.html", resourceController::userListPage);
+            put("GET /post/show.html", resourceController::postPage);
 
             put("POST /user/create", userController::signUp);
             put("POST /user/login", userController::login);

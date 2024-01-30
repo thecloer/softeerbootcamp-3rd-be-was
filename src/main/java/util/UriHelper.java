@@ -1,5 +1,6 @@
 package util;
 
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -35,5 +36,9 @@ public class UriHelper {
 
     public static String encode(String path) {
         return URLEncoder.encode(path, StandardCharsets.UTF_8);
+    }
+
+    public static String decode(String path) {
+        return URLDecoder.decode(path, StandardCharsets.UTF_8);
     }
 }
