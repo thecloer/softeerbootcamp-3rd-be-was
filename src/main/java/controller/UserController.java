@@ -17,7 +17,7 @@ public class UserController {
     }
 
     public HttpResponse signUp(HttpRequest request) {
-        User user = UserBuilder.fromStringifiedJson(request.getBody());
+        User user = UserBuilder.fromStringifiedJson(request.getBodyString());
 
         if (user.getUserId().isEmpty())
             throw new BadRequestException("userId가 입력되지 않았습니다.");
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     public HttpResponse login(HttpRequest request) {
-        User body = UserBuilder.fromStringifiedJson(request.getBody());
+        User body = UserBuilder.fromStringifiedJson(request.getBodyString());
 
         if (body.getUserId().isEmpty())
             throw new BadRequestException("userId가 입력되지 않았습니다.");

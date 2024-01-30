@@ -3,62 +3,107 @@ package util;
 import util.http.HttpMethod;
 import util.http.HttpRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
+import java.io.*;
 import java.util.Collections;
 import java.util.Set;
 import java.util.StringTokenizer;
 
 public class RequestParser {
 
+    private static final int BUFFER_SIZE = 1024;
     private static final Set<HttpMethod> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH));
 
-    public static HttpRequest parse(InputStream in) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+    public static HttpRequest parse(InputStream inputStream) throws IOException {
 
-        String line = br.readLine();
         HttpRequest.Builder requestBuilder = new HttpRequest.Builder();
 
-        parseRequestHeaderLine(requestBuilder, line);
-        parseRequestHeaderFields(requestBuilder, br);
+        byte[] inputBytes = readByteArrayFromInputStream(inputStream);
+
+        int cursor = 0;
+        cursor = parseRequestHeaderLine(inputBytes, cursor, requestBuilder);
+        cursor = parseRequestHeaderFields(inputBytes, cursor, requestBuilder);
         if (METHODS_WITH_BODY.contains(requestBuilder.getMethod()))
-            parseRequestBody(requestBuilder, br);
+            parseRequestBody(inputBytes, cursor, requestBuilder);
 
         return requestBuilder.build();
     }
 
-    private static void parseRequestHeaderLine(HttpRequest.Builder builder, String requestLine) {
-        StringTokenizer st = new StringTokenizer(requestLine);
+    private static byte[] readByteArrayFromInputStream(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream inputByteArrayStream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
 
-        if (st.countTokens() != 3)
-            throw new IllegalArgumentException("Invalid Request Line");
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            inputByteArrayStream.write(buffer, 0, bytesRead);
 
-        builder.method(HttpMethod.valueOf(st.nextToken()))
-                .uri(st.nextToken())
-                .protocol(st.nextToken());
+            if (bytesRead < BUFFER_SIZE) break;
+        }
+
+        return inputByteArrayStream.toByteArray();
     }
 
-    private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
-        for (String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
-            String[] tokens = line.split(":");
-            if (tokens.length == 2) builder.setProperty(tokens[0].trim(), tokens[1].trim());
+    private static int parseRequestHeaderLine(byte[] inputByte, int cursor, HttpRequest.Builder builder) throws IOException {
+
+        StringBuilder requestLineBuilder = new StringBuilder();
+        while (!isEndOfLine(inputByte, cursor)) {
+            requestLineBuilder.append((char) inputByte[cursor]);
+            cursor++;
         }
+        cursor = skipEndOfLine(cursor);
+
+        StringTokenizer tokenizer = new StringTokenizer(requestLineBuilder.toString());
+        if (tokenizer.countTokens() != 3)
+            throw new IOException("HTTP 요청 헤더 라인이 잘못됐습니다.");
+
+        builder.method(HttpMethod.valueOf(tokenizer.nextToken()))
+                .uri(tokenizer.nextToken())
+                .protocol(tokenizer.nextToken());
+
+        return cursor;
     }
 
-    private static void parseRequestBody(HttpRequest.Builder builder, BufferedReader br) throws IOException {
-        try {
-            String contentLengthValue = builder.getProperty("content-length");
-            int contentLength = Integer.parseInt(contentLengthValue.trim()); // TODO: contentLength > Integer.MAX_VALUE 일 경우 예외처리
-            char[] buffer = new char[contentLength]; // TODO: buffer size 작게 하고 while 문으로 읽기
-            br.read(buffer, 0, contentLength);
+    private static int parseRequestHeaderFields(byte[] inputByte, int cursor, HttpRequest.Builder builder) throws IOException {
 
-            builder.body(new String(buffer));
+        StringBuilder fieldLindBuilder = new StringBuilder();
 
-        } catch (NumberFormatException e) {
-            throw new IOException("Content-Length의 형식이 잘못됐습니다.");
+        while (cursor < inputByte.length) {
+            fieldLindBuilder.append((char) inputByte[cursor++]);
+            if (isEndOfLine(inputByte, cursor)) {
+                cursor = skipEndOfLine(cursor);
+                if (isEndOfLine(inputByte, cursor)) {
+                    cursor = skipEndOfLine(cursor);
+                    break;
+                }
+                String fieldLine = fieldLindBuilder.toString();
+                int idx = fieldLine.indexOf(':');
+                if (idx == -1) continue;
+                String key = fieldLine.substring(0, idx).trim();
+                String value = fieldLine.substring(idx + 1).trim();
+                builder.setProperty(key, value);
+
+                fieldLindBuilder.setLength(0);
+            }
         }
+
+        return cursor;
+    }
+
+    private static void parseRequestBody(byte[] inputByte, int cursor, HttpRequest.Builder builder) throws IOException {
+        ByteArrayOutputStream requestBodyStream = new ByteArrayOutputStream();
+
+        while (cursor < inputByte.length)
+            requestBodyStream.write(inputByte[cursor++]);
+
+        byte[] body = requestBodyStream.toByteArray();
+
+        builder.body(body);
+    }
+
+    private static boolean isEndOfLine(byte[] inputByte, int cursor) {
+        return cursor + 1 < inputByte.length && inputByte[cursor] == '\r' && inputByte[cursor + 1] == '\n';
+    }
+
+    private static int skipEndOfLine(int cursor) {
+        return cursor + 2;
     }
 }

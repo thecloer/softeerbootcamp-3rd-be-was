@@ -19,7 +19,7 @@ public class PostController {
     }
 
     public HttpResponse createPost(HttpRequest request) {
-        Post body = PostBuilder.fromStringifiedJson(request.getBody());
+        Post body = PostBuilder.fromStringifiedJson(request.getBodyString());
 
         if (body.getTitle() == null || body.getTitle().isEmpty())
             throw new BadRequestException("title이 입력되지 않았습니다.");

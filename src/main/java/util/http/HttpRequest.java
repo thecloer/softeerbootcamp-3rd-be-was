@@ -3,6 +3,7 @@ package util.http;
 import session.Session;
 import util.UriHelper;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequest {
@@ -11,12 +12,12 @@ public class HttpRequest {
     private final String uri;
     private final String protocol;
     private final String path;
-    private final String body;
+    private final byte[] body;
     private final Map<String, String> queries;
     private final Map<String, String> properties;
     private Session session;
 
-    private HttpRequest(HttpMethod method, String uri, String protocol, String body, Map<String, String> properties) {
+    private HttpRequest(HttpMethod method, String uri, String protocol, byte[] body, Map<String, String> properties) {
         this.method = method;
         this.uri = uri;
         this.protocol = protocol;
@@ -52,8 +53,12 @@ public class HttpRequest {
         return path;
     }
 
-    public String getBody() {
+    public byte[] getBody() {
         return body;
+    }
+
+    public String getBodyString() {
+        return new String(body, StandardCharsets.UTF_8);
     }
 
     public String getQueryParam(String key) {
@@ -77,7 +82,7 @@ public class HttpRequest {
         private HttpMethod method;
         private String uri;
         private String protocol;
-        private String body = "";
+        private byte[] body;
 
         public Builder method(HttpMethod method) {
             this.method = method;
@@ -94,7 +99,7 @@ public class HttpRequest {
             return this;
         }
 
-        public Builder body(String body) {
+        public Builder body(byte[] body) {
             this.body = body;
             return this;
         }
