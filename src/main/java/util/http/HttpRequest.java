@@ -57,7 +57,7 @@ public class HttpRequest {
     }
 
     public String getQueryParam(String key) {
-        return queries.getOrDefault(key, "");
+        return queries.getOrDefault(key.toLowerCase(), "");
     }
 
     public Session getSession() {
