@@ -33,16 +33,9 @@ public class ResourceController {
             return response;
 
         Session session = request.getSession();
-        String userId = session.getAttribute("userId");
-        if (userId == null)
-            throw new RedirectException("/user/login.html");
+        String username = session.getAttribute("username");
 
-        User user = database.findUserById(userId);
-        if (user == null)
-            throw new BadRequestException("존재하지 않는 사용자입니다.");
-
-        return response
-                .setTemplateData("name", user.getName());
+        return response.setTemplateData("name", username);
     }
 
     public HttpResponse profilePage(HttpRequest request) {
