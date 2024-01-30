@@ -70,18 +70,18 @@ public class RequestParser {
             fieldLindBuilder.append((char) inputByte[cursor++]);
             if (isEndOfLine(inputByte, cursor)) {
                 cursor = skipEndOfLine(cursor);
-                if (isEndOfLine(inputByte, cursor)) {
-                    cursor = skipEndOfLine(cursor);
-                    break;
-                }
                 String fieldLine = fieldLindBuilder.toString();
                 int idx = fieldLine.indexOf(':');
                 if (idx == -1) continue;
                 String key = fieldLine.substring(0, idx).trim();
                 String value = fieldLine.substring(idx + 1).trim();
                 builder.setProperty(key, value);
-
                 fieldLindBuilder.setLength(0);
+
+                if (isEndOfLine(inputByte, cursor)) {
+                    cursor = skipEndOfLine(cursor);
+                    break;
+                }
             }
         }
 
