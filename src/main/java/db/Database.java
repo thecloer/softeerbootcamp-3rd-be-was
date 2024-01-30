@@ -1,5 +1,6 @@
 package db;
 
+import model.Post.Post;
 import model.User.User;
 
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ public class Database {
     private static final Logger logger = LoggerFactory.getLogger(Database.class);
 
     private final ConcurrentHashMap<String, User> users = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Post> posts = new ConcurrentHashMap<>();
 
     public void addUser(User user) {
         users.put(user.getUserId(), user);
@@ -25,5 +27,18 @@ public class Database {
 
     public Collection<User> findAll() {
         return users.values();
+    }
+
+    public void addPost(Post post) {
+        posts.put(post.getPostId(), post);
+        logger.debug("[게시글 생성] id: {}", post.getTitle());
+    }
+
+    public Post findPostById(String postId) {
+        return posts.get(postId);
+    }
+
+    public Collection<Post> findAllPost() {
+        return posts.values();
     }
 }
