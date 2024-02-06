@@ -33,10 +33,9 @@ public class UserController {
 
         database.addUser(user); // TODO: 비밀번호 암호화
 
-        return new HttpResponse.Builder()
-                .status(HttpStatus.CREATED)
-                .setHeader("Location", "/")
-                .build();
+        return new HttpResponse()
+                .setStatus(HttpStatus.CREATED)
+                .setField("Location", "/");
     }
 
     public HttpResponse login(HttpRequest request) {
@@ -55,13 +54,24 @@ public class UserController {
             throw new BadRequestException("비밀번호가 일치하지 않습니다.");
 
         Session session = SessionManager.createSession();
-        session.setAttribute("userId", user.getUserId());
+        session.setAttribute("userId", user.getUserId()); // TODO: 세션에 들어간 데이터 "userId" 상수로 관리
         String cookie = SessionManager.toCookieString(session);
 
-        return new HttpResponse.Builder()
-                .status(HttpStatus.FOUND)
-                .setHeader("Location", "/") // TODO: redirect("/");
-                .addCookie(cookie)
-                .build();
+        return new HttpResponse()
+                .setStatus(HttpStatus.FOUND)
+                .setField("Location", "/") // TODO: redirect("/");
+                .addCookie(cookie);
+    }
+
+    public HttpResponse logout(HttpRequest request) {
+        Session session = request.getSession();
+        request.setSession(null);
+        SessionManager.distroySession(session.getSessionId());
+        String cookie = SessionManager.toCookieString(session, 0L);
+
+        return new HttpResponse()
+                .setStatus(HttpStatus.FOUND)
+                .setField("Location", "/")
+                .addCookie(cookie);
     }
 }

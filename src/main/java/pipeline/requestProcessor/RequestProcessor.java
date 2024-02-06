@@ -1,7 +1,7 @@
-package middleware;
+package pipeline.requestProcessor;
 
 import util.http.HttpRequest;
 
-public interface Middleware {
+public interface RequestProcessor {
     HttpRequest process(HttpRequest request);
 }

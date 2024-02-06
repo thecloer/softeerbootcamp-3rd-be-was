@@ -4,7 +4,7 @@ public interface HttpMessage {
     Integer getStatusCode();
     String getStatusMessage();
     ContentType getContentType();
-    String getAdditionalHeaders();
+    String getFields();
     Integer getBodyLength();
     byte[] getBody();
     String getCookies();

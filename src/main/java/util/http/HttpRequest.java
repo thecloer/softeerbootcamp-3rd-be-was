@@ -7,7 +7,7 @@ import java.util.*;
 
 public class HttpRequest {
 
-    private final String method;
+    private final HttpMethod method;
     private final String uri;
     private final String protocol;
     private final String path;
@@ -16,7 +16,7 @@ public class HttpRequest {
     private final Map<String, String> properties;
     private Session session;
 
-    private HttpRequest(String method, String uri, String protocol, String body, Map<String, String> properties) {
+    private HttpRequest(HttpMethod method, String uri, String protocol, String body, Map<String, String> properties) {
         this.method = method;
         this.uri = uri;
         this.protocol = protocol;
@@ -32,7 +32,7 @@ public class HttpRequest {
         );
     }
 
-    public String getMethod() {
+    public HttpMethod getMethod() {
         return method;
     }
 
@@ -68,14 +68,18 @@ public class HttpRequest {
         this.session = session;
     }
 
+    public Boolean isLoggedIn() {
+        return session != null;
+    }
+
     public static class Builder {
         private final Map<String, String> properties = new HashMap<>();
-        private String method;
+        private HttpMethod method;
         private String uri;
         private String protocol;
         private String body = "";
 
-        public Builder method(String method) {
+        public Builder method(HttpMethod method) {
             this.method = method;
             return this;
         }
@@ -100,7 +104,7 @@ public class HttpRequest {
             return this;
         }
 
-        public String getMethod() {
+        public HttpMethod getMethod() {
             return method;
         }
 

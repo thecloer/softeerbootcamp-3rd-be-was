@@ -1,5 +1,6 @@
 package util;
 
+import util.http.HttpMethod;
 import util.http.HttpRequest;
 
 import java.io.BufferedReader;
@@ -13,7 +14,7 @@ import java.util.StringTokenizer;
 
 public class RequestParser {
 
-    private static final Set<String> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of("POST", "PUT", "PATCH"));
+    private static final Set<HttpMethod> METHODS_WITH_BODY = Collections.unmodifiableSet(Set.of(HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH));
 
     public static HttpRequest parse(InputStream in) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
@@ -35,15 +36,15 @@ public class RequestParser {
         if (st.countTokens() != 3)
             throw new IllegalArgumentException("Invalid Request Line");
 
-        builder.method(st.nextToken())
+        builder.method(HttpMethod.valueOf(st.nextToken()))
                 .uri(st.nextToken())
                 .protocol(st.nextToken());
     }
 
     private static void parseRequestHeaderFields(HttpRequest.Builder builder, BufferedReader requestHeader) throws IOException {
         for (String line = requestHeader.readLine(); !(line == null || line.isEmpty()); line = requestHeader.readLine()) {
-            String[] tokens = line.split(": ");
-            if (tokens.length == 2) builder.setProperty(tokens[0], tokens[1]);
+            String[] tokens = line.split(":");
+            if (tokens.length == 2) builder.setProperty(tokens[0].trim(), tokens[1].trim());
         }
     }
 
@@ -52,10 +53,7 @@ public class RequestParser {
             String contentLengthValue = builder.getProperty("content-length");
             int contentLength = Integer.parseInt(contentLengthValue.trim()); // TODO: contentLength > Integer.MAX_VALUE 일 경우 예외처리
             char[] buffer = new char[contentLength]; // TODO: buffer size 작게 하고 while 문으로 읽기
-            int bytesRead = br.read(buffer, 0, contentLength);
-            if (bytesRead != contentLength) {
-                throw new IOException("Content-Length와 실제 Body의 길이가 다릅니다.");
-            }
+            br.read(buffer, 0, contentLength);
 
             builder.body(new String(buffer));
 

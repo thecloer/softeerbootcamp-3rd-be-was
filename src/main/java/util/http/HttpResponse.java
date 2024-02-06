@@ -5,18 +5,14 @@ import java.util.*;
 
 public class HttpResponse implements HttpMessage {
 
-    private final HttpStatus status;
-    private final ContentType contentType;
-    private final Map<String, String> additionalHeaders;
-    private final byte[] body;
-    private final List<String> cookies;
+    private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+    private ContentType contentType = ContentType.NONE;
+    private final Map<String, String> fields = new HashMap<>();
+    private byte[] body = new byte[0];
+    private final List<String> cookies = new ArrayList<>();
+    private final Map<String, String> templateData = new HashMap<>();
 
-    private HttpResponse(HttpStatus status, ContentType contentType, Map<String, String> additionalHeaders, byte[] body, List<String> cookies) {
-        this.status = status;
-        this.contentType = contentType;
-        this.additionalHeaders = additionalHeaders;
-        this.body = body;
-        this.cookies = cookies;
+    public HttpResponse() {
     }
 
     @Override
@@ -35,6 +31,15 @@ public class HttpResponse implements HttpMessage {
     }
 
     @Override
+    public String getFields() {
+        StringBuilder additionalHeader = new StringBuilder();
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
+        }
+        return additionalHeader.toString();
+    }
+
+    @Override
     public Integer getBodyLength() {
         return body.length;
     }
@@ -44,14 +49,6 @@ public class HttpResponse implements HttpMessage {
         return body;
     }
 
-    @Override
-    public String getAdditionalHeaders() {
-        StringBuilder additionalHeader = new StringBuilder();
-        for (Map.Entry<String, String> entry : additionalHeaders.entrySet()) {
-            additionalHeader.append(entry.getKey()).append(": ").append(entry.getValue()).append("\r\n");
-        }
-        return additionalHeader.toString();
-    }
 
     @Override
     public String getCookies() {
@@ -62,65 +59,54 @@ public class HttpResponse implements HttpMessage {
         return cookieBuilder.toString();
     }
 
+    public String getTemplateData(String key) {
+        return templateData.getOrDefault(key, "");
+    }
+
+    public HttpResponse setStatus(HttpStatus status) {
+        this.status = status;
+        return this;
+    }
+
+    public HttpResponse setContentType(ContentType contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    public HttpResponse setField(String key, String value) {
+        fields.put(key, value);
+        return this;
+    }
+
+    public HttpResponse addCookie(String cookie) {
+        cookies.add(cookie);
+        return this;
+    }
+
+    public HttpResponse setBody(String body) {
+        this.body = body.getBytes(StandardCharsets.UTF_8);
+        return this;
+    }
+
+    public HttpResponse setBody(byte[] body) {
+        this.body = body;
+        return this;
+    }
+
+    public HttpResponse setTemplateData(String key, String value) {
+        templateData.put(key, value);
+        return this;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder()
                 .append("HttpResponse ")
                 .append("{ status=").append(status.getCode())
                 .append(", contentType=").append(contentType.getValue())
-                .append(", additionalHeader=").append(additionalHeaders)
+                .append(", fields=").append(fields)
                 .append(", body=").append(new String(body))
                 .append(" }")
                 .toString();
-    }
-
-    public void setHeader(String key, String value) {
-        additionalHeaders.put(key, value);
-    }
-
-    public void addCookie(String cookie) {
-        cookies.add(cookie);
-    }
-
-    public static class Builder {
-        private final Map<String, String> additionalHeaders = new HashMap<>();
-        private final List<String> cookies = new ArrayList<>();
-        private HttpStatus status;
-        private ContentType contentType = ContentType.NONE;
-        private byte[] body = new byte[0];
-
-        public Builder status(HttpStatus status) {
-            this.status = status;
-            return this;
-        }
-
-        public Builder contentType(ContentType contentType) {
-            this.contentType = contentType;
-            return this;
-        }
-
-        public Builder body(byte[] body) {
-            this.body = body;
-            return this;
-        }
-
-        public Builder body(String body) {
-            this.body = body.getBytes(StandardCharsets.UTF_8);
-            return this;
-        }
-
-        public Builder setHeader(String key, String value) {
-            additionalHeaders.put(key, value);
-            return this;
-        }
-
-        public Builder addCookie(String cookie) {
-            cookies.add(cookie);
-            return this;
-        }
-
-        public HttpResponse build() {
-            return new HttpResponse(status, contentType, additionalHeaders, body, cookies);
-        }
     }
 }

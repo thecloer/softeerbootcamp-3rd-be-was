@@ -11,14 +11,14 @@
 
 ## WAS 구조
 
-![WAS 구조](./docs/was-architecture.png)
+![WAS 구조](docs/images/was-architecture.png)
 
 - [WebServer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/WebServer.java):
   웹 서버의 시작점, 소켓을 생성하고 클라이언트의 요청을 받아 `RequestHandler`를 스레드에 할당
 - [RequestHandler](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequestHandler.java):
   클라이언트의 요청으로 부터 `Request` 객체를 생성하고 최종 응답을 클라이언트에게 전송
 - [RequestPipeline](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/RequesetPipline.java):
-  요청이에서 부터 응답까지의 파이프라인, 요청은 등록된 미들웨어들을 거쳐 컨트롤러까지 도달
+  요청으로부터 응답이 생성되기까지의 순서를 담당하는 파이프라인, 요청은 등록된 프로세서들(`RequestProcessor`, `ResponseProcessor`)을 거쳐 컨트롤러까지 도달
 - [Router](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/webserver/Router.java):
   요청과 컨트롤러의 핸들러를 매핑
 - [Controller](https://github.com/thecloer/softeerbootcamp-3rd-be-was/tree/thecloer/src/main/java/controller): 요청에 대한 메인
@@ -31,7 +31,9 @@
 - [3단계 - 다양한 컨텐츠 타입 지원](#3단계---다양한-컨텐츠-타입-지원)
 - [4단계 - POST로 회원 가입](#4단계---post로-회원-가입)
 - [5단계 - 쿠키를 이용한 로그인](#5단계---쿠키를-이용한-로그인)
-- 6단계 - 동적인 HTML
+- [6단계 - 동적인 HTML](#6단계---동적인-html)
+
+<br/>
 
 ## 1단계 - index.html 응답
 
@@ -78,22 +80,27 @@
 
 ### 고민 사항
 
-- 요청 url에서 확장자를 추출하는 메서드는 어떤 클래스에 구현해야할까?
+- #### 요청 url에서 확장자를 추출하는 메서드는 어떤 클래스에 구현해야할까?
     - `ContentType` enum에 private 메서드로 구현 vs 새로운 클래스 혹은 URI extends 한 클래스
     - 우선 아직은 사용되는 곳이 Content-Type 뿐이므로 ContentType enum에 private 메서드로 구현
     - 추후 필요시 유틸 클래스 혹은 URI 클래스를 상속받는 클래스를 만들어 빼낼 예정
 
 
-- 오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?
+- #### 오류 메세지 응답 혹은 오류 페이지 응답은 어떻게 할까?
     - step-2에서 라우터를 구현 한뒤 예외에 따라 오류 메세지 혹은 오류 페이지 응답 해보자
 
 ### 기타
 
-- MIME(Multipurpose Internet Mail Extensions) type
-    - [MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)
-    - [최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
-- 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리
-    - 블로그 정리 글: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+- #### MIME(Multipurpose Internet Mail Extensions) type
+
+[MIME 타입](https://developer.mozilla.org/ko/docs/Web/HTTP/Basics_of_HTTP/MIME_types)  
+[최신 미디어 타입 리스트](https://www.iana.org/assignments/media-types/media-types.xhtml)
+
+- #### 자바 `Thread`, `Concurrent` 패키지, `Virtual Thread`에 대해 학습, 정리
+
+블로그에 정리한 내용: [Thread와 Concurrent 패키지 그리고 Virtual Thread](https://cloer.tistory.com/266)
+
+<br/>
 
 ## 2단계 - GET으로 회원가입
 
@@ -144,12 +151,14 @@
 
 ### 고민 사항
 
-- `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
+- #### `/` 접속 시 `/index.html`을 보여주는 기능을 어디에 구현해야할까?
+
     - `/`를 `/index.html`로 매핑하는 것은 루트 경로가 비어있을 경우 표시할 기본 경로 설정이라 생각
     - 기본 경로 설정은 라우터에서 필터링되지 않은 경로를 처리하는 `ResourceController`에 구현
 
 
-- `ApplicationContainer`와 `UserService`가 꼭 필요할까?
+- #### `ApplicationContainer`와 `UserService`가 꼭 필요할까?
+
     - `ApplicationContainer`
         - static 변수로 생성된 DB의 경우 테스트마다 DB 초기화 필요
         - 테스트를 위해 서비스에 불필요한 DB 초기화 메서드를 구현해야함
@@ -162,18 +171,21 @@
         - 컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리
 
 
-- 오류 응답 상태코드
+- #### 오류 응답 상태코드
     - 없는 경로 요청 시 404 Not Found 응답 vs 302 /404.html 페이지로 리다이렉트 응답
     - 회원가입 실패 시 400 Bad Request 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트
     - 사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현
 
 ### 기타
 
-#### HTTP GET 프로토콜
+- #### HTTP GET 프로토콜
 
 GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데이터에 영향을 주지 않는다.  
-데이터 요청에 필요한 추가 정보는 URI의 쿼리 스트링으로 전달할 수 있다. (예: `https://example.com/products?category=books&page=1`)
+데이터 요청에 필요한 추가 정보는 URI의 쿼리 스트링으로 전달할 수 있다.   
+(예: `https://example.com/products?category=books&page=1`)  
 자주 바뀌지 않는 데이터에 대한 GET 요청은 결과를 캐싱해 같은 요청이 재발생할 경우 빠르게 응답을 제공할 수 있다.
+
+<br/>
 
 ## 3단계 - 다양한 컨텐츠 타입 지원
 
@@ -226,7 +238,8 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 고민 사항
 
-- [step 2의 고민 사항](#고민-사항-1), 서비스 레이어에 대한 고민 사항에 대한 구현 변경
+- #### [step 2의 서비스 레이어에 대한 고민 사항](#applicationcontainer와-userservice가-꼭-필요할까) 구현 변경
+
     - ~~테스트 코드 작성의 편의를 위해 도입~~
     - ~~컨트롤러가 많아지고 많은 컨트롤러에서 `User`를 다룬다면 중복 코드가 많아질거라 생각돼 컨트롤러에서 서비스로 분리~~
     - `RequestHandler`와 컨트롤러의 역할을 명확하게 분리
@@ -236,7 +249,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
         - 컨트롤러의 테스트가 어려워 생성했던 `UserService`는 도입했던 이유는 사라졌으므로 제거
 
 
-- [step 2의 고민 사항](#고민-사항-1), 오류 응답 상태코드에 대한 고민 사항에 대한 구현 변경
+- #### [step 2의 오류 응답 상태코드에 대한 고민 사항](#오류-응답-상태코드) 구현 변경
     - ~~없는 경로 요청 시 not found 404 응답 vs 302 리다이렉트 /404.html 응답~~
     - ~~회원가입 실패 시 bad request 400 응답 vs 302 다시 회원가입 폼으로 메시지와 함께 리다이렉트~~
     - ~~사용자의 예상 가능한 잘못된 요청에 대해 서버가 사용자의 다음 행동을 지정하는 것이므로 리다이렉트로 구현~~
@@ -248,19 +261,20 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기타
 
-#### 드미어 법칙
+- #### 드미어 법칙
 
-`드미어 법칙(Demeter's Law)` 혹은 `최소 지식 원칙(Principle of Least Knowledge)`은 객체 지향 프로그래밍에서 객체 간의 상호작용을 설계할 때 사용되는 지침 중 하나다.
-이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다.
-객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의 내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
+`드미어 법칙(Demeter's Law)` 혹은 `최소 지식 원칙(Principle of Least Knowledge)`은 객체 지향 프로그래밍에서 객체 간의 상호작용을 설계할 때 사용되는 지침 중
+하나다. 이 원칙의 목적은 객체의 내부 구조에 대한 지식을 최소화함으로써 시스템의 유연성을 높이고, 결합도를 낮추는 것이다. 객체 내부 구조에 대한 지식을 최소화 한다는 말이 추상적일 수 있는데 객체의
+내부 구조를 몰라도 사용할 수 있어야 한다는 의미로 해석할 수 있다.
 
-`Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한
+예를 들어 `Request`객체에서 쿼리 스트링을 제공하는 방법을 변경한
 부분([commit `c499cdf`](https://github.com/thecloer/softeerbootcamp-3rd-be-was/commit/c499cdf961aa677911b962569e645aa697f3809c))
-을 보면 직관적으로 이해할 수 있다.  
-이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리 스트링은 `Request`객체에 `Map`형태로 담겨있다는 것을 알아야
-한다는 것을 의미한다.  
-변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.  
+을 보면 직관적으로 이해할 수 있다. 이전 코드에서는 `getQueries()`를 통해 쿼리 스트링이 담긴 `Map`을 반환했다. 이는 `Request`객체를 사용하는 곳에서 쿼리
+스트링은 `Request`객체에 `Map`형태로 담겨있다는
+것을 알아야 한다는 것을 의미한다. 변경된 코드에서는 `getQueryParam(String key)`를 통해 쿼리 스트링의 키에 해당하는 값을 반환한다.
 예시가 기본 타입처럼 자주 쓰이는 `Map`이기 때문에 적절한 예시인지는 모르겠으나 내부 구조를 몰라도 사용할 수 있는 인터페이스로 변경했다는 점에서 `드미어 법칙`을 적용한 예시라고 생각한다.
+
+<br/>
 
 ## 4단계 - POST로 회원 가입
 
@@ -298,19 +312,22 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 고민 사항
 
-- 응답객체는 요청의 바디를 어떻게 처리해야 범용적으로 사용할 수 있을까?
+- #### 응답객체는 요청의 바디를 어떻게 처리해야 범용적으로 사용할 수 있을까?
+
     - 요청의 바디는 JSON, plain text등 다양한 형태일 수 있다.
     - 따라서 요청 객체는 문자열의 형태로 바디를 저장하고 바디를 사용하는 곳에서 적절한 형태로 변환해 사용하는 것이 좋다고 생각했다.
 
 
-- JSON 형태의 요청을 모델 객체로 변환하는 기능을 어떻게 구현할까?
+- #### JSON 형태의 요청을 모델 객체로 변환하는 기능을 어떻게 구현할까?
+
     - 모델마다 JSON 요청으로 모델 객체를 생성하는 기능을 구현할 수 있지만 모델이 많아질 경우 중복 코드가 많아질 것이라 생각했다.
     - 따라서 어노테이션과 리플렉션을 이용해 요청의 바디를 모델 객체로 변환하는 기능을 구현했다.
     - 객체의 필드와 JSON의 키값을 매핑하기 위해 어노테이션을 사용했고 리플렉션을 이용해 모델 객체를 생성하고 필드에 값을 할당했다.
     - 리플렉션으로 빈 모델 객체를 생성하기 위해 모든 모델에 공통적으로 인자가 없는 기본 생성자가 필요했고 이를 강제하기 위해 `Model`을 인터페이스가 아닌 추상 클래스로 구현했다.
 
 
-- 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+- #### 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+
     - 아래와 같은 방법을 구현할 수 있을 것 같다.
         - `Exception`을 상속받는 예외 클래스를 구현
         - 어플리케이션에서 클라이언트로 전달하는 모든 예외를 해당 예외 객체로 래핑
@@ -321,7 +338,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
 
 ### 기타
 
-#### `java.nio`와 `java.io`
+- #### `java.nio`와 `java.io`
 
 `java.io`는 java 1.0 부터 지원되는 I/O 패키지로 전통적인 블로킹 I/O 모델을 사용한다.
 스트림 기반 I/O로 바이트 스트림(InputStream, OutputStream)과 문자 스트림(Reader, Writer)으로 나뉜다.
@@ -344,11 +361,27 @@ java 1.0 부터 지원한 만큼 기초적이고 직관적인 API를 제공한�
 과제에서 제작 중인 웹서버의 경우 `Thread per Request` 방식으로 동작하며 요청당 최대 하나의 정적 페이지를 마지막에 읽어온다.
 따라서 `java.nio`를 사용해 non-blocking 비동기 I/O로 구현했을 때 얻을 수 있는 이점은 크지 않다.
 
-#### HTTP Field는 case-insensitive
+- #### HTTP Field는 case-insensitive
 
 HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content-Type`과 `content-type`은 동일한 필드이고 클라이언트에서 대문자로 보낼지 소문자로 보낼 지 알 수 없어 서버에서 요청을 처리 할
-때 case-insensitive하게 고려해야한다.  
-[RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#name-field-names)
+때 case-insensitive하게 고려해야한다.
+
+> Field names are case-insensitive and ought to be registered within the "Hypertext Transfer Protocol (HTTP) Field Name
+> Registry"
+
+[RFC HTTP Semantics (Field name)](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.1-3)
+
+#### HTTP Field를 파싱 할 때 leading or trailing whitespace를 고려해야 한다.
+
+필드 값은 선행 공백이나 후행 공백을 포함하지 않는다. 하지만 특정 버전의 HTTP에서 메시지에 이러한 공백을 허용하는 경우도 있기에 필드 파싱을 구현할 때는 이러한 공백을 제외해한다.
+
+> A field value does not include leading or trailing whitespace. When a specific version of HTTP allows such whitespace
+> to appear in a message, a field parsing implementation MUST exclude such whitespace prior to evaluating the field
+> value.
+
+[RFC HTTP Semantics (Field values)](https://www.rfc-editor.org/rfc/rfc9110.html#section-5.5-3)
+
+<br/>
 
 ## 5단계 - 쿠키를 이용한 로그인
 
@@ -390,13 +423,12 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
     - 확장성을 위해 여러개의 미들웨어를 등록할 수 있도록 구현
     - 필요하다면 컨트롤러에서 생성된 응답을 처리하는 미들웨어도 구현 가능
 
-
-- [step-4의 고민 사항](#고민-사항-3): 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?
+- [step 4의 고민 사항, 어플리케이션 어디에서나 예외를 통해 바로 응답할 수는 없을까?](#어플리케이션-어디에서나-예외를-통해-바로-응답할-수는-없을까) 구현
     - `HttpBaseException`을 통해 요청 파이프라인 내부에서 발행한 예외는 `RequestPipeline`에서 받아 바로 응답
 
 ### 고민 사항
 
-#### 유연하고 확장성있는 프레임워크
+- #### 유연하고 확장성있는 프레임워크
 
 쿠키-세션을 이용한 로그인을 구현하며 확장성있는 구조에 대한 고민을 많이했다.  
 모든 요청에 적용해야하는 로직을 추가할 때 마다 클래스로 레이어를 만들어 기존 레이어 사이에 추가한다면 구조를 파악하기 힘들고 레이어의 순서를 하나하나 따라가며 확인해 봐야할 것이다.  
@@ -406,3 +438,115 @@ HTTP 헤더 필드는 대소문자를 구분하지 않는다. 따라서 `Content
 
 서비스의 규모가 커지고 기능이 추가되어도 컨트롤러의 핸들러를 작성하고 라우터에 등록하는 것으로 쉽게 확장할 수 있다. 지금은 라우터에 직접 핸들러를 등록하지만 어노테이션과 리플렉션을 이용해 라우터에 핸들러를 등록하는
 기능을 구현할 수 있다.
+
+<br/>
+
+## 6단계 - 동적인 HTML
+
+### 학습 키워드 & 학습 목표
+
+> HTTP, 동적 html
+
+- 세션 정보를 바탕으로 주어인 요청에 대해 동적인 HTML을 응답하도록 구현할 수 있다.
+
+### 기능 요구사항
+
+- ✅ 사용자가 로그인 상태일 경우 /index.html에서 사용자 이름을 표시해 준다.
+- ✅ 사용자가 로그인 상태가 아닐 경우 /index.html에서 [로그인] 버튼을 표시해 준다.
+- ✅ 사용자가 로그인 상태일 경우 /user/list 에서 사용자 목록을 출력한다.
+- ✅ /user/list 페이지 접근시 로그인하지 않은 상태일 경우 로그인 페이지(login.html)로 이동한다.
+
+### 프로그래밍 요구사항
+
+- ✅ 쿠키와 세션을 활용해서 주어진 요구사항을 만족하도록 구현한다.
+
+### 구현 내용
+
+- 간단한 서버 사이드 랜더링 구현
+    - 응답 객체에 데이터를
+      추가하고 [TemplateRenderer](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/main/java/pipeline/responseProcessor/templateEngine/TemplateRenderer.java)
+      를 통해 동적인 HTML을 생성해 응답
+    - HTML 파일에 `{{key}}`의 형태로 템플릿 키를 작성하고 응답 객체에 `key`에 해당하는 값을 추가하면 `{{key}}`가 `value`로 치환되어
+      응답 ([테스트 코드](https://github.com/thecloer/softeerbootcamp-3rd-be-was/blob/thecloer/src/test/java/pipeline/responseProcessor/TemplateRendererTest.java))
+
+
+- 요청 파이프라인에 미들웨어 대신 프로세서를 적용
+    - 요청과 응답 처리를 구분하기 위해 미들웨어를 `RequestProcessor`, `ResponseProcessor`으로 분리
+    - 프로세서를 파이프라인에 등록하는 것으로 특정 혹은 모든 요청과 응답에 적용해야 할 작업을 쉽게 추가할 수 있도록 구현
+
+
+- 로그인 이후 세션 만료 전에 들어오는 모든 요청에 대한 응답에 세션 쿠키 재발급
+    - 기존 코드는 로그인 시 쿠키를 발급하고 이후 쿠키를 발급하지 않는다.
+    - 이때 생기는 문제점은 활발히 활동 중임에도 로그인 시점으로 부터 쿠키 만료 시간이 지나면 로그인이 풀리는 것이다.
+    - 이는 활동과 관계없이 브라우저에서 쿠키 만료 시간이 지나면 쿠키를 삭제하기 때문이다.
+    - 따라서 로그인 이후 세션 만료 전에 들어오는 모든 요청에 대해 응답에 세션 쿠키를 재발급하도록 구현했다.
+    - 모든 요청에 대해 일괄적으로 적용해야 하는 작업이므로 `ResponseProcessor`로 구현했다.(`SessionCookieRefresher`)
+
+
+- 로그아웃 구현
+    - 로그아웃은 로그인 상태에서만 가능 (`AuthFilter`에서 차단)
+    - 로그아웃 시 세션 삭제, 세션 쿠키 강제 만료
+
+### 고민 사항
+
+- #### 스레드 풀의 사이즈
+
+기존 스레드 풀의 사이즈는 JVM이 사용할 수 있는 프로세서의 수 + 1개로 설정했다.
+
+```java
+int ThreadPoolSize = Runtime.getRuntime().availableProcessors() + 1;
+ExecutorService executorService = Executors.newFixedThreadPool(ThreadPoolSize);
+```
+
+(CPU 코어 + 1)개로 스레드 풀 사이즈를 설정 것은 CPU 사용을 최대화하기 위함이었다. 하지만 위 설정의 문제점은 작업의 특성을 고려하지 않았다는 점이다.  
+(추가로 `Runtime.getRuntime().availableProcessors()`는 JVM이 사용할 수 있는 프로세서의 수를 반환하며 런타임에 변경될 수 있으므로 프로세서 수에 민감한 애플리케이션의 경우
+필요에 따라 폴링하여 사용해야한다.)
+
+(CPU 코어 + 1)개의 스레드 풀 사이즈는 CPU 바운드 작업을 주로 수행하며 I/O 작업의 비중이 낮은 경우에 적합하다. I/O 바운드 작업이 주를 이루고 있는 현재 웹서버의 경우 (CPU 코어 + 1)개의
+스레드 풀 사이즈는 굉장히 작은 숫자라 생각된다.  
+적절한 스레드 풀 사이즈는 스레드가 수행하는 작업과 서버가 실행되는 환경에 따라 달라 직접 테스트 해보지 않고 적절한 사이즈를 정하기는 어려웠다. Apache Tomcat과 관련 논문을 참고하여 스레드 풀 사이즈를
+최소 (3 * CPU 코어), 최대 (20 * CPU 코어)로 설정했다.
+(8코어 기준 최소 24개, 최대 160개)
+
+```java
+int processorCount = Runtime.getRuntime().availableProcessors();
+ExecutorService executorService = new ThreadPoolExecutor(
+        processorCount * 3,
+        processorCount * 20,
+        60L,
+        TimeUnit.SECONDS,
+        new LinkedBlockingQueue<>()
+);
+```
+
+[Apache Tomcat 11 Configuration Reference](https://tomcat.apache.org/tomcat-11.0-doc/config/executor.html)
+
+> maxThreads: default is 200  
+> minSpareThreads: default is 25
+
+[Ling Y., Mullen T., & Lin X. (2000). _Analysis of Optimal Thread Pool
+Size_. Telcordia Technologies. Department of Electrical Engineering, Hong Kong University.](https://dl.acm.org/doi/pdf/10.1145/346152.346320)
+
+> Currently, thread pool size is set via a combination of heuristics and practical experience.
+> A heuristic is used to set the initial pool size, and then operators are advised to monitor the
+> system load and to modify the pool size if there are performance bottlenecks [Ca197]. One such
+> rule of thumb is that the size of thread pool should be <u>two times of the number of CPUs on the
+> host machine</u> [Ric96]. Another rule, used by <u>Microsoft's IIS, initially allocates 10 threads in the
+> thread pool per CPU</u>, and allows the size of the thread pool to grow based on the number of
+> client requests. <u>The thread pool's maximum size is heuristically set to be two times of the
+> number of megabytes of RAM in the host</u> [Ric96].
+
+- #### 로그인 여부에 따른 동적 네비게이션 바
+
+`Thymeleaf`에서 영감을 받아 동적 HTML을 구현했다. 작동 방식은 컨트롤러에서 데이터를 응답 객체에 추가하고 응답 객체에 추가된 데이터를 `TemplateRenderer`가 HTML의 적절한 곳에 삽입하며
+동작한다.
+
+여기서 생기는 문제는 네비게이션 바였다. 네비게이션 바는 모든 페이지에 있으며 항상 로그인 상태에따라 다르게 표시되어야 한다. 즉, 모든 HTML이 동적 HTML이고 모든 HTML에 대한 핸들러를
+생성해야 함을 의미했다.
+
+단순히 로그인 여부에 따라 지정된 네비게이션 바를 삽입하기 위해 모든 HTML에 대응하는 핸들러를 만드는 건 비효율 적이라고 생각했다.
+
+컨트롤러에서 "만" 데이터를 삽입해야 한다는 생각 때문에 이런 고민을 했던 것 같다. 생각보다 간단하게 해결 했는데 `CommonComponentIjector`를 통해 여러 페이지에 공통적으로 사용되는 동적 HTML
+컴포넌트를 삽입하도록 구현했다.
+
+동적 HTML 컴포넌트들을 HTML 파일로 관리하고 서버 로딩 시점에 읽어와도 괜찮을 것 같다.

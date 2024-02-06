@@ -1,17 +1,18 @@
 package controller;
 
+import db.Database;
+import exception.BadRequestException;
 import exception.RedirectException;
+import model.User.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import util.http.ContentType;
-import util.http.HttpRequest;
-import util.http.HttpResponse;
-import util.http.HttpStatus;
+import pipeline.responseProcessor.templateEngine.TemplateComponents;
+import session.Session;
+import util.FileReader;
+import util.http.*;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
 
 public class ResourceController {
 
@@ -20,49 +21,86 @@ public class ResourceController {
     private static final String TEMPLATE = "src/main/resources/templates";
     private static final String STATIC = "src/main/resources/static";
 
-    public HttpResponse resourceHandler(HttpRequest request) {
-        String path = redirectRoot(request.getMethod(), request.getPath());
+    private final Database database;
+
+    public ResourceController(Database database) {
+        this.database = database;
+    }
+
+    public HttpResponse homePage(HttpRequest request) {
+        HttpResponse response = makeBaseTemplateResponse("/index.html"); // TODO: 로그인 상태에 따라 컨트롤러 분리
+        if (!request.isLoggedIn())
+            return response;
+
+        Session session = request.getSession();
+        String userId = session.getAttribute("userId");
+        if (userId == null)
+            throw new RedirectException("/user/login.html");
+
+        User user = database.findUserById(userId);
+        if (user == null)
+            throw new BadRequestException("존재하지 않는 사용자입니다.");
+
+        return response
+                .setTemplateData("name", user.getName());
+    }
+
+    public HttpResponse profilePage(HttpRequest request) {
+        HttpResponse response = makeBaseTemplateResponse(request.getPath());
+        if (!request.isLoggedIn())
+            return response;
+
+        Session session = request.getSession();
+        String userId = session.getAttribute("userId");
+        if (userId == null)
+            throw new RedirectException("/user/login.html");
+
+        User user = database.findUserById(userId);
+        if (user == null)
+            throw new BadRequestException("존재하지 않는 사용자입니다.");
+
+        return response
+                .setTemplateData("name", user.getName())
+                .setTemplateData("email", user.getEmail());
+    }
+
+    public HttpResponse userListPage(HttpRequest request) {
+        HttpResponse response = makeBaseTemplateResponse(request.getPath());
+        if (!request.isLoggedIn())
+            return response;
+
+        Collection<User> users = database.findAll();
+
+        String userListComponent = TemplateComponents.userList(users);
+
+        return response
+                .setTemplateData("userListComponent", userListComponent);
+    }
+
+    public HttpResponse staticHandler(HttpRequest request) {
+        String path = request.getPath();
         ContentType contentType = ContentType.getContentType(path);
         String base = (contentType == ContentType.HTML) ? TEMPLATE : STATIC;
 
-        byte[] body = read(base, path);
-        return new HttpResponse.Builder()
-                .status(HttpStatus.OK)
-                .contentType(contentType)
-                .body(body)
-                .build();
+        byte[] body = read(base + path);
+        return new HttpResponse()
+                .setStatus(HttpStatus.OK)
+                .setContentType(contentType)
+                .setBody(body);
     }
 
-    private String redirectRoot(String method, String path) {
-        if ("GET".equals(method) && path.equals("/")) {
-            return "/index.html";
-        }
-        return path;
+    private HttpResponse makeBaseTemplateResponse(String path) {
+        return new HttpResponse()
+                .setStatus(HttpStatus.OK)
+                .setContentType(ContentType.HTML)
+                .setBody(read(TEMPLATE + path));
     }
 
-    private byte[] read(String base, String path) {
-        File file = new File(base + path);
-        if (file.length() > Integer.MAX_VALUE) {
-            logger.debug("파일의 크기가 너무 큽니다.: {}", file.getName());
-            throw new RedirectException("/404.html");
-        }
-
-        try (FileInputStream fis = new FileInputStream(file); BufferedInputStream bis = new BufferedInputStream(fis)) {
-            byte[] data = new byte[(int) file.length()];
-            int totalBytesRead = 0;
-            int bytesRead;
-
-            while (totalBytesRead < data.length && (bytesRead = bis.read(data, totalBytesRead, data.length - totalBytesRead)) != -1) {
-                totalBytesRead += bytesRead;
-            }
-
-            if (totalBytesRead != data.length) {
-                logger.debug("파일 전체를 읽는데 실패했습니다.: {}", file.getName());
-                throw new IOException();
-            }
-
-            return data;
+    private byte[] read(String path) {
+        try {
+            return FileReader.read(path);
         } catch (IOException e) {
+            logger.error(e.getMessage());
             throw new RedirectException("/404.html");
         }
     }

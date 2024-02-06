@@ -3,9 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
-import middleware.AuthFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pipeline.RequestPipeline;
 import util.*;
 import util.http.ContentType;
 import util.http.HttpMessage;
@@ -14,11 +14,7 @@ import util.http.HttpRequest;
 public class RequestHandler implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-    private static final RequestPipeline requestPipeline = new RequestPipeline();
-
-    static {
-        requestPipeline.use(new AuthFilter());
-    }
+    private static final RequestPipeline requestPipeline = ApplicationContainer.getRequestPipeline();
 
     private final Socket connection;
 
@@ -47,7 +43,7 @@ public class RequestHandler implements Runnable {
         if (response.getContentType() != ContentType.NONE)
             dos.writeBytes("Content-Type: " + response.getContentType() + ";charset=utf-8\r\n");
         dos.writeBytes("Content-Length: " + response.getBodyLength() + "\r\n");
-        dos.writeBytes(response.getAdditionalHeaders());
+        dos.writeBytes(response.getFields());
         dos.writeBytes(response.getCookies());
         dos.writeBytes("\r\n");
 

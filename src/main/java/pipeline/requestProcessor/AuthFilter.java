@@ -1,17 +1,19 @@
-package middleware;
+package pipeline.requestProcessor;
 
 import exception.RedirectException;
 import session.Session;
 import session.SessionManager;
 import util.http.HttpRequest;
-import webserver.Router;
+import pipeline.Router;
 
 import java.util.Set;
 
-public class AuthFilter implements Middleware {
+public class AuthFilter implements RequestProcessor {
 
     private static final Set<String> AUTHENTICATED = Set.of(
-            "GET /user/profile.html"
+            "GET /user/profile.html",
+            "GET /user/list.html",
+            "GET /user/logout"
     );
     private static final Set<String> UNAUTHENTICATED = Set.of(
             "GET /user/login.html",
