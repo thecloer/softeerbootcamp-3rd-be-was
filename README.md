@@ -222,7 +222,7 @@ GET 메서드는 주로 데이터 요청에 사용되며 서버에 저장된 데
     - 회원가입 성공 시 생성한 데이터를 받을 수 있는 URI를 응답 헤더에 포함해 응답
         - `Location: /user/profile.html?userId={userId}`
         - 프론트에서 응답받은 URI로 회원 정보 요청
-        - [참고](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
+        - [RFC 9110 HTTP Semantics: 201 Created](https://www.rfc-editor.org/rfc/rfc9110#name-201-created)
 
 
 - 유틸 클래스 테스트 코드 추가
